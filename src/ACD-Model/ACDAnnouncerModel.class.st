@@ -87,7 +87,7 @@ ACDAnnouncerModel >> forAnnouncerContext: announcerContext receiverContext: aRec
 		stackFilter := self stackFilterFor: aReceiverContext sender.
 		(stackFilter locateAnnouncementDelivery) isNil ifTrue: [ 
 			^ self ]. "aContext was not created as direct result of an announcemnt."
-	
+		"self halt."
 		announcement := stackFilter extractAnnouncement.
 		executingSubscription := stackFilter extractExecutingSubscription. 
 		allSubscriptions := stackFilter extractAllSubscriptions.

@@ -10,6 +10,12 @@ Class {
 }
 
 { #category : #accessing }
+ACDebugSession class >> stackFilterFor: aContext [ 
+
+	^ ACDStackFilter forContext: aContext 
+]
+
+{ #category : #accessing }
 ACDebugSession >> allSubscriptions [
 
 	^ announcerModel allSubscriptions
@@ -102,7 +108,7 @@ ACDebugSession >> senderContext [
 { #category : #private }
 ACDebugSession >> stackFilterFor: aContext [ 
 
-	^ ACDStackFilter forContext: aContext 
+	^ self class stackFilterFor: aContext 
 ]
 
 { #category : #initialization }
