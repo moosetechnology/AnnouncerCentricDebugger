@@ -158,7 +158,7 @@ ACGlamourDebugger >> actOnBrowserClosing: ann [
 	self session ifNotNil: [:aSession|  aSession terminate ]
 ]
 
-{ #category : #building }
+{ #category : #'building actions' }
 ACGlamourDebugger >> addChangeDebuggerActionFor: aPresentation to: aCollection [
 	(Smalltalk tools filterDebuggersForContext: self selectedContext)
 		remove: self class ifAbsent: [  ];
@@ -190,20 +190,6 @@ ACGlamourDebugger >> announcerIn: composite [
 				showFirst: [ :a | a custom: (ACDAnnouncerBrowser new debugger: self; startOn: each) ];
 				startOn: each ]
 
-	"composite table
-		title: 'Notifications';
-		showOnly: 50;
-		display: [ :announcerContext | announcerContext receiver subscriptions acdSubscriptions ];
-		column: 'Type' evaluated: [:subscription | 
-			subscription announcementClass printString ];
-		column: 'Action' evaluated: [:subscription | 
-			subscription action printString ]"
-"		icon: [ :each |
-			each value class theNonMetaClass browserIcon
-				ifNotNil: [ OBMorphicIcons iconNamed: each value class theNonMetaClass browserIcon ] ];"
-
-	"composite custom: ACDAnnouncerBrowser new first noTitle; noActions."
-
 ]
 
 { #category : #accessing }
@@ -231,7 +217,6 @@ ACGlamourDebugger >> compose [
 			andShow: [ :composite | self receiverIn: composite ].	
 		browser transmit
 			to: #announcer;
-			"transformed: [:session | session announcerContext];"
 			andShow: [ :composite | self announcerIn: composite ].
 		browser transmit
 			to: #sender;
@@ -271,14 +256,7 @@ ACGlamourDebugger >> errorWasInUIProcess: aBoolean [
 	self session errorWasInUIProcess: aBoolean
 ]
 
-{ #category : #building }
-ACGlamourDebugger >> installCodeActionsFor: aPresentation [
-
-	self installWhereIsActionFor: aPresentation.
-
-]
-
-{ #category : #building }
+{ #category : #'building actions' }
 ACGlamourDebugger >> installDebuggingActionsFor: aPresentation [
 	"self installRestartActionFor: aPresentation."
 	"self installStepIntoActionFor: aPresentation.
@@ -288,7 +266,7 @@ ACGlamourDebugger >> installDebuggingActionsFor: aPresentation [
 	self installDynamicActionsFor: aPresentation.
 ]
 
-{ #category : #building }
+{ #category : #'building actions' }
 ACGlamourDebugger >> installDynamicActionsFor: aPresentation [
 	
 	aPresentation dynamicActionsOnSelection: [ :presentation || newActions |
@@ -298,7 +276,7 @@ ACGlamourDebugger >> installDynamicActionsFor: aPresentation [
 		newActions ]
 ]
 
-{ #category : #building }
+{ #category : #'building actions' }
 ACGlamourDebugger >> installResumeActionFor: aPresentation [
 	aPresentation 
 		act: [ :presentation :model |
@@ -307,18 +285,6 @@ ACGlamourDebugger >> installResumeActionFor: aPresentation [
 			self browser close. ]
 		icon: GLMUIThemeExtraIcons glamorousPlay
 		entitled: 'Resume' 
-]
-
-{ #category : #building }
-ACGlamourDebugger >> installWhereIsActionFor: aPresentation [ 
-
-	aPresentation 
-		act: [ :textPresentation :context | 
-			textPresentation selectionInterval: (self session pcRangeForContext:  context) ]
-		icon: GLMUIThemeExtraIcons glamorousSearch 
-		on: $w
-		entitled: 'Where is?'
-
 ]
 
 { #category : #opening }
@@ -352,7 +318,7 @@ ACGlamourDebugger >> receiverIn: composite [
 	"composite custom: ACDReceiverBrowser new first noTitle; noActions."
 ]
 
-{ #category : #building }
+{ #category : #actions }
 ACGlamourDebugger >> resume [
 
 	self session resume.
@@ -369,13 +335,15 @@ ACGlamourDebugger >> selectedContext [
 { #category : #building }
 ACGlamourDebugger >> senderIn: composite [
 
-	composite smalltalkCode
+	composite custom: (ACDSenderBrowser new debugger: self)
+
+	"composite smalltalkCode
 		title: [:senderContext | GTInspector new printObjectAsAnItem: senderContext receiver ];
 		doItReceiver: [:senderContext | senderContext receiver ];
 		format: [:senderContext |  senderContext  sourceCode asText makeSelectorBold];
 		smalltalkClass: [ :senderContext | senderContext methodClass ];
 		with: [ :code | self installCodeActionsFor: code ]
-
+"
 	"composite custom: ACDSenderBrowser new first noActions; noTitle "
 ]
 

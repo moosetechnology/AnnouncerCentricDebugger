@@ -13,9 +13,11 @@ ACDReceiverBrowser >> compose [
 	self smalltalkCode
 		title: [:receiverContext | GTInspector new printObjectAsAnItem: receiverContext receiver ];
 		doItReceiver: [:receiverContext | receiverContext receiver ];
-		format: [:receiverContext | receiverContext  sourceCode ];
+		format: [:receiverContext | receiverContext  sourceCode asText makeSelectorBold];
 		smalltalkClass: [ :receiverContext | receiverContext methodClass ];
-		with: [ :presentation | self installActionsFor: presentation ]
+		with: [ :presentation | self installActionsFor: presentation ].
+		
+
 ]
 
 { #category : #accessing }
@@ -35,6 +37,7 @@ ACDReceiverBrowser >> debugger: anObject [
 { #category : #building }
 ACDReceiverBrowser >> installActionsFor: aPresentation [
 
+	self installStepOverActionFor: aPresentation.
 	self installWhereIsActionFor: aPresentation.
 	self installAnnouncementReceivedActionsFor: aPresentation.
 ]
@@ -101,6 +104,16 @@ ACDReceiverBrowser >> installAnnouncerInvokedActionsFor: aPresentation [
 		entitled: 'from anyone'
 		categorized: 'Halt when an announcement is received'.
 	
+]
+
+{ #category : #building }
+ACDReceiverBrowser >> installStepOverActionFor: aPresentation [
+	aPresentation 
+		act: [ 
+			self session stepOver: self selectedContext.
+			"self selectTopOfStack: session context" ]
+		icon: GLMUIThemeExtraIcons glamorousOver
+		entitled: 'Step over' 
 ]
 
 { #category : #building }
