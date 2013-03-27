@@ -5,6 +5,71 @@ Class {
 }
 
 { #category : #opening }
+ACGlamourDebugger class >> debugBasedOnSession: aSession [
+
+	self new 
+		process: aSession process controller: nil context: aSession context;
+		open
+]
+
+{ #category : #opening }
+ACGlamourDebugger class >> debugCurrentProcess [
+	| process errorWasInUIProcess |
+	process := Processor activeProcess.
+	errorWasInUIProcess := UIManager default spawnNewProcessIfThisIsUI: process.
+	
+	WorldState
+		addDeferredUIMessage: [[| session announcerContext |
+				
+				session := (self spanSessionForContext: process suspendedContext fromProcess: process)
+				errorWasInUIProcess: errorWasInUIProcess.
+				
+				announcerContext := (ACDStackFilter forContext:  process suspendedContext sender sender) locateAnnouncerEntryPoint.
+				
+				session initializeSenderContext: announcerContext sender 
+					announcerContext: announcerContext 
+					receiverContext: process suspendedContext sender.
+				session inspect.
+				
+				self openOn: session.
+					
+					] value.
+				"on: Error
+				do: [:ex | Debugger primitiveError: 'Orginal error: ' , 'ACD halt' , '.
+	Smalltalk tools debugger error: '
+							, ([ex description]
+									on: Error
+									do: ['a ' , ex class printString]) , ':']"
+								
+								].
+
+	process suspend.
+]
+
+{ #category : #accessing }
+ACGlamourDebugger class >> defaultTitle [
+
+	^ 'Announcer Centric Debugger'
+]
+
+{ #category : #testing }
+ACGlamourDebugger class >> handlesContext: aContext [
+
+	"TODO: aContext sender sender
+	aContext represents the context of the exception.
+	we need the sender -> must improve"
+	 ^ (self sessionClass stackFilterFor: aContext sender) locateAnnouncerEntryPoint notNil 
+]
+
+{ #category : #'class initialization' }
+ACGlamourDebugger class >> initialize [ 
+	super initialize.
+
+	"Add ourselves to registry. See [Smalltalk tools]" 
+	Smalltalk tools registerDebugger: self.
+]
+
+{ #category : #opening }
 ACGlamourDebugger class >> openAndInitializeSessionWith: sessionInitializationBlock [
 
 	| process errorWasInUIProcess |
@@ -14,7 +79,6 @@ ACGlamourDebugger class >> openAndInitializeSessionWith: sessionInitializationBl
 	WorldState
 		addDeferredUIMessage: [[| session |
 					
-			
 			session := (self spanSessionForContext: process suspendedContext fromProcess: process)
 				errorWasInUIProcess: errorWasInUIProcess.
 			sessionInitializationBlock value: session.
@@ -70,15 +134,49 @@ ACGlamourDebugger class >> sessionClass [
 ]
 
 { #category : #accessing }
-ACGlamourDebugger class >> spanSessionForContext: aContext fromProcess: aProcess [
+ACGlamourDebugger class >> spanCompleteSessionForContext: aContext fromProcess: anInterruptedProcess [
+	|session announcerContext|
+	
+	announcerContext := (ACDStackFilter forContext: aContext sender) locateAnnouncerEntryPoint.
+	session := (self spanSessionForContext: aContext fromProcess: anInterruptedProcess).		
+	session 
+		initializeSenderContext: announcerContext sender 
+		announcerContext: announcerContext 
+		receiverContext: aContext.
+	^ session
+]
 
-	^ self sessionClass process: aProcess context: aContext 
+{ #category : #accessing }
+ACGlamourDebugger class >> spanSessionForContext: aContext fromProcess: anInterruptedProcess [
+
+	^ self sessionClass process: anInterruptedProcess context: aContext 
 ]
 
 { #category : #actions }
 ACGlamourDebugger >> actOnBrowserClosing: ann [
 
-	self session terminate
+	self session ifNotNil: [:aSession|  aSession terminate ]
+]
+
+{ #category : #building }
+ACGlamourDebugger >> addChangeDebuggerActionFor: aPresentation to: aCollection [
+	(Smalltalk tools filterDebuggersForContext: self selectedContext)
+		remove: self class ifAbsent: [  ];
+		do: [ :each | 
+					aCollection
+						add:
+							(GLMGenericAction new
+								action: [ :presentation :model | |currentSession selectedContext|
+											currentSession := self session.
+											selectedContext := self selectedContext.
+											self detachSession.
+											self browser close.
+											currentSession updateContextTo: selectedContext.
+											each debugBasedOnSession: currentSession ];
+								icon: GLMUIThemeExtraIcons glamorousAdd;
+								title: each defaultTitle;
+								category: 'Available Debuggers';
+								yourself) ]
 ]
 
 { #category : #building }
@@ -110,33 +208,39 @@ ACGlamourDebugger >> announcerIn: composite [
 
 { #category : #accessing }
 ACGlamourDebugger >> browser [ 
+
 	^ self presentations first
 ]
 
 { #category : #building }
 ACGlamourDebugger >> compose [
 
-	self title: 'Announcer Centric Debugger'.
+	self title: self debuggerTitle.
 	self tabulator with: [:browser | 
 		browser
 			column: [ :column | 
 						column
-							row: #sender;
+							row: #receiver;
 							row: #announcer;
-							row: #receiver].
+							row: #sender];
+			column: #stack.
+		
 		browser transmit
-			to: #sender;
-			transformed: [:session | session senderContext];
-			andShow: [ :composite | self senderIn: composite ].
+			to: #receiver;
+			transformed: [:session | session receiverContext];
+			andShow: [ :composite | self receiverIn: composite ].	
 		browser transmit
 			to: #announcer;
 			"transformed: [:session | session announcerContext];"
 			andShow: [ :composite | self announcerIn: composite ].
 		browser transmit
-			to: #receiver;
-			transformed: [:session | session receiverContext];
-			andShow: [ :composite | self receiverIn: composite ].
-			
+			to: #sender;
+			transformed: [:session | session senderContext];
+			andShow: [ :composite | self senderIn: composite ].
+		browser transmit
+			to: #stack;
+			andShow: [ :composite | self stackIn: composite ].
+		
 		browser transmit
 			from: #sender port: #entity;
 			to: #sender port: #selectionInterval;
@@ -149,11 +253,60 @@ ACGlamourDebugger >> compose [
 	self on: GLMBrowserClosing send: #actOnBrowserClosing: to: self.
 ]
 
+{ #category : #accessing }
+ACGlamourDebugger >> debuggerTitle [
+
+	^ self class defaultTitle 
+]
+
+{ #category : #actions }
+ACGlamourDebugger >> detachSession [
+
+	(self browser pane port: #entity) silentValue: nil
+]
+
+{ #category : #initialization }
+ACGlamourDebugger >> errorWasInUIProcess: aBoolean [
+
+	self session errorWasInUIProcess: aBoolean
+]
+
 { #category : #building }
 ACGlamourDebugger >> installCodeActionsFor: aPresentation [
 
 	self installWhereIsActionFor: aPresentation.
 
+]
+
+{ #category : #building }
+ACGlamourDebugger >> installDebuggingActionsFor: aPresentation [
+	"self installRestartActionFor: aPresentation."
+	"self installStepIntoActionFor: aPresentation.
+	self installStepOverActionFor: aPresentation.
+	self installStepThroughActionFor: aPresentation."
+	self installResumeActionFor: aPresentation.
+	self installDynamicActionsFor: aPresentation.
+]
+
+{ #category : #building }
+ACGlamourDebugger >> installDynamicActionsFor: aPresentation [
+	
+	aPresentation dynamicActionsOnSelection: [ :presentation || newActions |
+		newActions := OrderedCollection new.
+		"self addCreateMessageActionFor: aPresentation to: newActions."
+		self addChangeDebuggerActionFor: aPresentation to: newActions.
+		newActions ]
+]
+
+{ #category : #building }
+ACGlamourDebugger >> installResumeActionFor: aPresentation [
+	aPresentation 
+		act: [ :presentation :model |
+			model resume.
+			model clear.
+			self browser close. ]
+		icon: GLMUIThemeExtraIcons glamorousPlay
+		entitled: 'Resume' 
 ]
 
 { #category : #building }
@@ -166,6 +319,22 @@ ACGlamourDebugger >> installWhereIsActionFor: aPresentation [
 		on: $w
 		entitled: 'Where is?'
 
+]
+
+{ #category : #opening }
+ACGlamourDebugger >> openFullNoSuspendLabel: aString [
+	"TODO: do not ignore the title"
+	
+	self open.
+	"TODO: why is this necessy here? I took it from the current debugger"
+	"errorWasInUIProcess := UIManager default spawnNewProcessIfThisIsUI: interruptedProcess"
+	
+]
+
+{ #category : #initialization }
+ACGlamourDebugger >> process: aProcess controller: aController context: aContext [
+
+	self session: (self class spanCompleteSessionForContext: aContext fromProcess: aProcess)
 ]
 
 { #category : #building }
@@ -191,6 +360,12 @@ ACGlamourDebugger >> resume [
 	self browser close
 ]
 
+{ #category : #accessing }
+ACGlamourDebugger >> selectedContext [
+
+	^ ((self browser paneNamed: #stack) port: #selection) value
+]
+
 { #category : #building }
 ACGlamourDebugger >> senderIn: composite [
 
@@ -208,6 +383,23 @@ ACGlamourDebugger >> senderIn: composite [
 ACGlamourDebugger >> session [
 
 	^ (self browser pane port: #entity) value
+]
+
+{ #category : #accessing }
+ACGlamourDebugger >> session: aSession [
+
+	^ (self browser pane port: #entity) value: aSession
+]
+
+{ #category : #building }
+ACGlamourDebugger >> stackIn: composite [
+
+	composite list	
+		title: 'Stack';
+		showOnly: 50;
+		display: #stack;
+		format: [ :each | String streamContents: [:stream | each printDebugOn: stream ] ];
+		with: [ :list | self installDebuggingActionsFor: list ]
 ]
 
 { #category : #actions }
