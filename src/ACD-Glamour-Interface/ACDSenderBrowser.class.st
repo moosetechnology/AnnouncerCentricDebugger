@@ -1,6 +1,6 @@
 Class {
 	#name : #ACDSenderBrowser,
-	#superclass : #GTInspector,
+	#superclass : #GLMCompositePresentation,
 	#instVars : [
 		'debugger'
 	],

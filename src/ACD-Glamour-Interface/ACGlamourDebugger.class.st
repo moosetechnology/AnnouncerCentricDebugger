@@ -229,13 +229,16 @@ ACGlamourDebugger >> compose [
 		browser transmit
 			from: #sender port: #entity;
 			to: #sender port: #selectionInterval;
+			when: [:senderContext | senderContext notNil ];
 			transformed: [:senderContext | self session pcRangeForContext: senderContext].
 		browser transmit
 			from: #receiver port: #entity;
 			to: #receiver port: #selectionInterval;
-			transformed: [:receiverContext | self session pcRangeForContext: receiverContext].
-		 ].
+			when: [:receiverContext | receiverContext notNil ];
+			transformed: [:receiverContext | self session pcRangeForContext: receiverContext] ].
+		
 	self on: GLMBrowserClosing send: #actOnBrowserClosing: to: self.
+	self on: ACDUpdate send: #updateStep to: self.
 ]
 
 { #category : #accessing }
@@ -258,11 +261,7 @@ ACGlamourDebugger >> errorWasInUIProcess: aBoolean [
 
 { #category : #'building actions' }
 ACGlamourDebugger >> installDebuggingActionsFor: aPresentation [
-	"self installRestartActionFor: aPresentation."
-	"self installStepIntoActionFor: aPresentation.
-	self installStepOverActionFor: aPresentation.
-	self installStepThroughActionFor: aPresentation."
-	self installResumeActionFor: aPresentation.
+
 	self installDynamicActionsFor: aPresentation.
 ]
 
@@ -274,17 +273,6 @@ ACGlamourDebugger >> installDynamicActionsFor: aPresentation [
 		"self addCreateMessageActionFor: aPresentation to: newActions."
 		self addChangeDebuggerActionFor: aPresentation to: newActions.
 		newActions ]
-]
-
-{ #category : #'building actions' }
-ACGlamourDebugger >> installResumeActionFor: aPresentation [
-	aPresentation 
-		act: [ :presentation :model |
-			model resume.
-			model clear.
-			self browser close. ]
-		icon: GLMUIThemeExtraIcons glamorousPlay
-		entitled: 'Resume' 
 ]
 
 { #category : #opening }
@@ -356,7 +344,7 @@ ACGlamourDebugger >> session [
 { #category : #accessing }
 ACGlamourDebugger >> session: aSession [
 
-	^ (self browser pane port: #entity) value: aSession
+	 (self browser pane port: #entity) value: aSession
 ]
 
 { #category : #building }
@@ -375,6 +363,20 @@ ACGlamourDebugger >> updateReceiver [
 
 	((self browser paneNamed: #receiver) port: #entity) value: self session receiverContext.
 	(self browser paneNamed: #receiver)  update.
+]
+
+{ #category : #actions }
+ACGlamourDebugger >> updateStep [
+	| receiverPane stackPane|
+	receiverPane := self browser paneNamed: #receiver.
+	(receiverPane port: #entity)
+		value: nil;
+		value: self session context.
+	receiverPane update.
+	
+	stackPane := self browser paneNamed: #stack.
+	stackPane update.
+	
 ]
 
 { #category : #events }

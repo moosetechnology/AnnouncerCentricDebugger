@@ -1,23 +1,103 @@
 Class {
 	#name : #ACDReceiverBrowser,
-	#superclass : #GTInspector,
+	#superclass : #GLMCompositePresentation,
 	#instVars : [
 		'debugger'
 	],
 	#category : #'ACD-Glamour-Interface'
 }
 
+{ #category : #actions }
+ACDReceiverBrowser >> actOnBrowserClosing: ann [
+	
+	self removeActions 
+]
+
+{ #category : #building }
+ACDReceiverBrowser >> addDynamicActionsFor: aPresentation to: aCollection [
+
+	(self session receiverContext = self session context and: [self session context willReturn]) ifFalse: [ 
+		self addStepIntoActionFor: aPresentation to: aCollection.
+		self addStepOverActionFor: aPresentation to: aCollection.
+		self addStepThroughActionFor: aPresentation to: aCollection ]
+
+]
+
+{ #category : #building }
+ACDReceiverBrowser >> addStepIntoActionFor: aPresentation to: aCollection [
+	
+	aCollection
+		add:
+			(GLMGenericAction new
+				action: [ :presentation :context | 
+							self session stepInto: context.
+							self debugger announce: ACDUpdate ];
+				icon: GLMUIThemeExtraIcons glamorousInto;
+				title: 'Step into';
+				yourself)	
+]
+
+{ #category : #building }
+ACDReceiverBrowser >> addStepOverActionFor: aPresentation to: aCollection [
+	
+	aCollection
+		add:
+			(GLMGenericAction new
+				action: [ :presentation :context | 
+							self session stepOver: context.
+							self debugger announce: ACDUpdate ];
+				icon: GLMUIThemeExtraIcons glamorousOver;
+				title: 'Step over';
+				yourself)	
+
+]
+
+{ #category : #building }
+ACDReceiverBrowser >> addStepThroughActionFor: aPresentation to: aCollection [ 
+	
+	aCollection
+		add:
+			(GLMGenericAction new
+				action: [ :presentation :context | 
+							self session stepThrough: context.
+							self debugger announce: ACDUpdate ];
+				icon: GLMUIThemeExtraIcons glamorousThrough;
+				title: 'Step through';
+				yourself)	
+]
+
 { #category : #building }
 ACDReceiverBrowser >> compose [
 
+"	self tabulator with: [:browser | 
+		browser column: #main.
+		
+		browser transmit
+			to: #main;
+			andShow: [ :composite | 
+				composite smalltalkCode
+					when: [:value | value notNil ];
+					title: [:receiverContext | GTInspector new printObjectAsAnItem: receiverContext receiver ];
+					doItReceiver: [:receiverContext | receiverContext receiver ];	
+					format: [:receiverContext | receiverContext  sourceCode asText makeSelectorBold];
+					smalltalkClass: [ :receiverContext | receiverContext methodClass ];
+					with: [ :presentation | self installActionsFor: presentation ] ].
+				
+		browser transmit
+			fromOutsidePort: #selectionInterval;			
+			to: #main port: #selectionInterval: ]"
+
+
+
 	self smalltalkCode
+		when: [:value | value notNil ];
 		title: [:receiverContext | GTInspector new printObjectAsAnItem: receiverContext receiver ];
 		doItReceiver: [:receiverContext | receiverContext receiver ];
 		format: [:receiverContext | receiverContext  sourceCode asText makeSelectorBold];
 		smalltalkClass: [ :receiverContext | receiverContext methodClass ];
-		with: [ :presentation | self installActionsFor: presentation ].
-		
-
+		with: [ :presentation | self installActionsFor: presentation ]
+		"updateOn: Announcement from: self."
+	
 ]
 
 { #category : #accessing }
@@ -37,9 +117,10 @@ ACDReceiverBrowser >> debugger: anObject [
 { #category : #building }
 ACDReceiverBrowser >> installActionsFor: aPresentation [
 
-	self installStepOverActionFor: aPresentation.
+	self installDynamicActionsFor: aPresentation.
 	self installWhereIsActionFor: aPresentation.
-	self installAnnouncementReceivedActionsFor: aPresentation.
+	self installResumeActionFor: aPresentation.
+	"self installAnnouncementReceivedActionsFor: aPresentation"
 ]
 
 { #category : #building }
@@ -107,13 +188,21 @@ ACDReceiverBrowser >> installAnnouncerInvokedActionsFor: aPresentation [
 ]
 
 { #category : #building }
-ACDReceiverBrowser >> installStepOverActionFor: aPresentation [
+ACDReceiverBrowser >> installDynamicActionsFor: aPresentation [
+
+	aPresentation dynamicActions: [ :presentation || newActions |
+		newActions := OrderedCollection new.
+		self addDynamicActionsFor: presentation to: newActions.
+		newActions ].
+]
+
+{ #category : #building }
+ACDReceiverBrowser >> installResumeActionFor: aPresentation [
+	
 	aPresentation 
-		act: [ 
-			self session stepOver: self selectedContext.
-			"self selectTopOfStack: session context" ]
-		icon: GLMUIThemeExtraIcons glamorousOver
-		entitled: 'Step over' 
+		act: [ self debugger resume ]
+		icon: GLMUIThemeExtraIcons glamorousPlay
+		entitled: 'Resume' 
 ]
 
 { #category : #building }
@@ -125,6 +214,32 @@ ACDReceiverBrowser >> installWhereIsActionFor: aPresentation [
 		icon: GLMUIThemeExtraIcons glamorousSearch 
 		on: $w
 		entitled: 'Where is?'
+]
+
+{ #category : #building }
+ACDReceiverBrowser >> registerActions [
+
+	self session ifNotNil: [ :aSession |
+		aSession
+			"when: #restart send: #updateRestart to: self;
+			when: #resume send: #updateResume to: self;"
+			when: #stepInto send: #updateStepInto to: self;
+			when: #stepOver send: #updateStepOver to: self;
+			when: #stepThrough send: #updateStepThrough to: self
+			"when: #contextChanged send: #updateContextChanged to: self"  ]
+]
+
+{ #category : #building }
+ACDReceiverBrowser >> removeActions [
+
+	self session ifNotNil: [ :aSession |
+		aSession  
+			"removeActionsForEvent: #restart;
+			removeActionsForEvent: #resume;"
+			removeActionsForEvent: #stepInto;
+			removeActionsForEvent: #stepOver;
+			removeActionsForEvent: #stepThrough
+			"removeActionsForEvent:#contextChanged" ]. 
 ]
 
 { #category : #accessing }
