@@ -160,23 +160,17 @@ ACGlamourDebugger >> actOnBrowserClosing: ann [
 
 { #category : #'building actions' }
 ACGlamourDebugger >> addChangeDebuggerActionFor: aPresentation to: aCollection [
-	(Smalltalk tools filterDebuggersForContext: self selectedContext)
-		remove: self class ifAbsent: [  ];
-		do: [ :each | 
-					aCollection
-						add:
-							(GLMGenericAction new
-								action: [ :presentation :model | |currentSession selectedContext|
-											currentSession := self session.
-											selectedContext := self selectedContext.
-											self detachSession.
-											self browser close.
-											currentSession updateContextTo: selectedContext.
-											each debugBasedOnSession: currentSession ];
-								icon: GLMUIThemeExtraIcons glamorousAdd;
-								title: each defaultTitle;
-								category: 'Available Debuggers';
-								yourself) ]
+	
+	(self debuggersForContext: self selectedContext)
+		do: [ :aDebuggerClass | 
+			aCollection
+				add:
+					(GLMGenericAction new
+						action: [ self debug: self selectedContext using: aDebuggerClass ];
+						icon: GLMUIThemeExtraIcons glamorousAdd;
+						title: aDebuggerClass defaultTitle;
+						category: 'Available Debuggers';
+						yourself) ]
 ]
 
 { #category : #building }
@@ -241,10 +235,29 @@ ACGlamourDebugger >> compose [
 	self on: ACDUpdate send: #updateStep to: self.
 ]
 
+{ #category : #actions }
+ACGlamourDebugger >> debug: aContext using: aDebuggerClass [
+	| currentSession  |
+	
+	currentSession := self session.
+	self detachSession.
+	self browser close.
+	currentSession updateContextTo: aContext.
+	aDebuggerClass debugBasedOnSession: currentSession
+]
+
 { #category : #accessing }
 ACGlamourDebugger >> debuggerTitle [
 
 	^ self class defaultTitle 
+]
+
+{ #category : #accessing }
+ACGlamourDebugger >> debuggersForContext: aContext [
+
+	^ (Smalltalk tools filterDebuggersForContext: aContext)
+		remove: self class ifAbsent: [  ];
+		yourself
 ]
 
 { #category : #actions }
@@ -304,6 +317,18 @@ ACGlamourDebugger >> receiverIn: composite [
 		with: [ :code | self installCodeActionsFor: code ]"
 
 	"composite custom: ACDReceiverBrowser new first noTitle; noActions."
+]
+
+{ #category : #actions }
+ACGlamourDebugger >> replaceDebuggerWith: aDebuggerClass [
+	| currentSession selectedContext |
+	
+	currentSession := self session.
+	selectedContext := self selectedContext.
+	self detachSession.
+	self browser close.
+	currentSession updateContextTo: selectedContext.
+	aDebuggerClass debugBasedOnSession: currentSession
 ]
 
 { #category : #actions }

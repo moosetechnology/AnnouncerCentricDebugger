@@ -14,12 +14,28 @@ ACDReceiverBrowser >> actOnBrowserClosing: ann [
 ]
 
 { #category : #building }
+ACDReceiverBrowser >> addChangeDebuggerActionFor: aPresentation to: aCollection [
+	
+	(self debugger debuggersForContext: self session context)
+		do: [ :aDebuggerClass | 
+			aCollection
+				add:
+					(GLMGenericAction new
+						action: [ self debugger debug: self session context using: aDebuggerClass ];
+						title: aDebuggerClass defaultTitle;
+						category: 'Available Debuggers';
+						yourself) ]
+
+]
+
+{ #category : #building }
 ACDReceiverBrowser >> addDynamicActionsFor: aPresentation to: aCollection [
 
 	(self session receiverContext = self session context and: [self session context willReturn]) ifFalse: [ 
 		self addStepIntoActionFor: aPresentation to: aCollection.
 		self addStepOverActionFor: aPresentation to: aCollection.
-		self addStepThroughActionFor: aPresentation to: aCollection ]
+		self addStepThroughActionFor: aPresentation to: aCollection ].
+	self addChangeDebuggerActionFor: aPresentation to: aCollection
 
 ]
 
