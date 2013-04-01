@@ -47,7 +47,7 @@ ACDReceiverBrowser >> addStepIntoActionFor: aPresentation to: aCollection [
 			(GLMGenericAction new
 				action: [ :presentation :context | 
 							self session stepInto: context.
-							self debugger announce: ACDUpdate ];
+							self debugger announce: ACDReceiverUpdate ];
 				icon: GLMUIThemeExtraIcons glamorousInto;
 				title: 'Step into';
 				yourself)	
@@ -61,7 +61,7 @@ ACDReceiverBrowser >> addStepOverActionFor: aPresentation to: aCollection [
 			(GLMGenericAction new
 				action: [ :presentation :context | 
 							self session stepOver: context.
-							self debugger announce: ACDUpdate ];
+							self debugger announce: ACDReceiverUpdate ];
 				icon: GLMUIThemeExtraIcons glamorousOver;
 				title: 'Step over';
 				yourself)	
@@ -76,7 +76,7 @@ ACDReceiverBrowser >> addStepThroughActionFor: aPresentation to: aCollection [
 			(GLMGenericAction new
 				action: [ :presentation :context | 
 							self session stepThrough: context.
-							self debugger announce: ACDUpdate ];
+							self debugger announce: ACDReceiverUpdate ];
 				icon: GLMUIThemeExtraIcons glamorousThrough;
 				title: 'Step through';
 				yourself)	

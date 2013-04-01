@@ -7,7 +7,22 @@ Class {
 	#category : #'ACD-Glamour-Interface'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'building actions' }
+ACDAnnouncerBrowser >> addStepToNextSubscriptionActionFor: aPresentation to: aCollection [
+	self session hasMoreActiveSubscriptions
+		ifTrue: [ 
+			aCollection
+				add:
+					(GLMGenericAction new
+						action: [ 
+									self nextSubscription.
+									self debugger announce: ACDAnnouncerUpdate ];
+						title: 'Next subscription';
+						icon: GLMUIThemeExtraIcons glamorousOver;
+						yourself) ]
+]
+
+{ #category : #building }
 ACDAnnouncerBrowser >> announcementIn: aComposite [ 
 			
 	aComposite dynamic 
@@ -18,7 +33,7 @@ ACDAnnouncerBrowser >> announcementIn: aComposite [
 					startOn: aSession announcement].
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #building }
 ACDAnnouncerBrowser >> announcerIn: aComposite [ 
 	|announcerPresentation|
 	
@@ -30,7 +45,7 @@ ACDAnnouncerBrowser >> announcerIn: aComposite [
 	self installAnnouncerActionsIn: announcerPresentation. 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #building }
 ACDAnnouncerBrowser >> componentsIn: aComposite [ 
 
 	self 
@@ -39,7 +54,7 @@ ACDAnnouncerBrowser >> componentsIn: aComposite [
 		announcerIn: aComposite
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #building }
 ACDAnnouncerBrowser >> compose [
 
 	self tabulator with: [:browser | 
@@ -63,7 +78,7 @@ ACDAnnouncerBrowser >> debugger: anObject [
 	debugger := anObject 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'building actions' }
 ACDAnnouncerBrowser >> installAnnouncerActionsIn: aPresentation [ 
 
 	aPresentation 
@@ -77,6 +92,15 @@ ACDAnnouncerBrowser >> installAnnouncerActionsIn: aPresentation [
 			self session announcer haltWhenAnnoucerIsNotifiedBy: self session sender.
 			self debugger resume ] 
 		entitled: 'Halt when notified by sender'
+]
+
+{ #category : #'building actions' }
+ACDAnnouncerBrowser >> installSubscriptionsActionsIn: aPresentation [ 
+
+	aPresentation dynamicActions: [ :presentation || newActions |
+		newActions := OrderedCollection new.
+		self addStepToNextSubscriptionActionFor: aPresentation to: newActions.
+		newActions ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -107,7 +131,7 @@ ACDAnnouncerBrowser >> session [
 	^ self debugger session 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #building }
 ACDAnnouncerBrowser >> subscriptionsIn: aComposite [ 
 
 	aComposite table
@@ -123,12 +147,6 @@ ACDAnnouncerBrowser >> subscriptionsIn: aComposite [
 		textBackgroundColor: [:subscription :aSession| aSession executingSubscription == subscription 
 			ifTrue: [Color lightGray] 
 			ifFalse: [Color transparent ] ];
-		act: [ :aPresentation |
-			self nextSubscription. 
-			aPresentation update.
-			self debugger updateReceiver.
-			] icon: GLMUIThemeExtraIcons glamorousOver entitled: 'Next subscription' 
-		"icon: [ :each |
-			each value class theNonMetaClass browserIcon
-				ifNotNil: [ OBMorphicIcons iconNamed: each value class theNonMetaClass browserIcon ] ]".
+		 with: [ :presentation |
+			self installSubscriptionsActionsIn: presentation ]
 ]

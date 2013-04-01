@@ -152,10 +152,31 @@ ACGlamourDebugger class >> spanSessionForContext: aContext fromProcess: anInterr
 	^ self sessionClass process: anInterruptedProcess context: aContext 
 ]
 
-{ #category : #actions }
+{ #category : #callbacks }
+ACGlamourDebugger >> actOnAnnouncerUpdate [
+
+	self 
+		updateAnnouncer;
+		updateStack;
+		updateReceiver
+
+
+]
+
+{ #category : #callbacks }
 ACGlamourDebugger >> actOnBrowserClosing: ann [
 
 	self session ifNotNil: [:aSession|  aSession terminate ]
+]
+
+{ #category : #callbacks }
+ACGlamourDebugger >> actOnReceiverUpdate [
+
+	self 
+		updateStack;
+		updateReceiver
+
+
 ]
 
 { #category : #'building actions' }
@@ -167,7 +188,6 @@ ACGlamourDebugger >> addChangeDebuggerActionFor: aPresentation to: aCollection [
 				add:
 					(GLMGenericAction new
 						action: [ self debug: self selectedContext using: aDebuggerClass ];
-						icon: GLMUIThemeExtraIcons glamorousAdd;
 						title: aDebuggerClass defaultTitle;
 						category: 'Available Debuggers';
 						yourself) ]
@@ -232,7 +252,8 @@ ACGlamourDebugger >> compose [
 			transformed: [:receiverContext | self session pcRangeForContext: receiverContext] ].
 		
 	self on: GLMBrowserClosing send: #actOnBrowserClosing: to: self.
-	self on: ACDUpdate send: #updateStep to: self.
+	self on: ACDReceiverUpdate send: #actOnReceiverUpdate to: self.
+	self on: ACDAnnouncerUpdate send: #actOnAnnouncerUpdate to: self.
 ]
 
 { #category : #actions }
@@ -273,17 +294,16 @@ ACGlamourDebugger >> errorWasInUIProcess: aBoolean [
 ]
 
 { #category : #'building actions' }
-ACGlamourDebugger >> installDebuggingActionsFor: aPresentation [
+ACGlamourDebugger >> installStackActionsFor: aPresentation [
 
-	self installDynamicActionsFor: aPresentation.
+	self installStackDynamicActionsFor: aPresentation.
 ]
 
 { #category : #'building actions' }
-ACGlamourDebugger >> installDynamicActionsFor: aPresentation [
+ACGlamourDebugger >> installStackDynamicActionsFor: aPresentation [
 	
 	aPresentation dynamicActionsOnSelection: [ :presentation || newActions |
 		newActions := OrderedCollection new.
-		"self addCreateMessageActionFor: aPresentation to: newActions."
 		self addChangeDebuggerActionFor: aPresentation to: newActions.
 		newActions ]
 ]
@@ -317,18 +337,6 @@ ACGlamourDebugger >> receiverIn: composite [
 		with: [ :code | self installCodeActionsFor: code ]"
 
 	"composite custom: ACDReceiverBrowser new first noTitle; noActions."
-]
-
-{ #category : #actions }
-ACGlamourDebugger >> replaceDebuggerWith: aDebuggerClass [
-	| currentSession selectedContext |
-	
-	currentSession := self session.
-	selectedContext := self selectedContext.
-	self detachSession.
-	self browser close.
-	currentSession updateContextTo: selectedContext.
-	aDebuggerClass debugBasedOnSession: currentSession
 ]
 
 { #category : #actions }
@@ -380,31 +388,34 @@ ACGlamourDebugger >> stackIn: composite [
 		showOnly: 50;
 		display: #stack;
 		format: [ :each | String streamContents: [:stream | each printDebugOn: stream ] ];
-		with: [ :list | self installDebuggingActionsFor: list ]
+		with: [ :list | self installStackActionsFor: list ]
 ]
 
-{ #category : #actions }
+{ #category : #updating }
+ACGlamourDebugger >> updateAnnouncer [
+
+	(self browser paneNamed: #announcer) update
+
+]
+
+{ #category : #updating }
 ACGlamourDebugger >> updateReceiver [
-
-	((self browser paneNamed: #receiver) port: #entity) value: self session receiverContext.
-	(self browser paneNamed: #receiver)  update.
-]
-
-{ #category : #actions }
-ACGlamourDebugger >> updateStep [
-	| receiverPane stackPane|
+	| receiverPane |
 	receiverPane := self browser paneNamed: #receiver.
 	(receiverPane port: #entity)
 		value: nil;
 		value: self session context.
 	receiverPane update.
-	
-	stackPane := self browser paneNamed: #stack.
-	stackPane update.
+]
+
+{ #category : #updating }
+ACGlamourDebugger >> updateStack [
+
+	(self browser paneNamed: #stack) update
 	
 ]
 
-{ #category : #events }
+{ #category : #callbacks }
 ACGlamourDebugger >> windowIsClosing [ 
 
 	self announce: GLMBrowserClosing new

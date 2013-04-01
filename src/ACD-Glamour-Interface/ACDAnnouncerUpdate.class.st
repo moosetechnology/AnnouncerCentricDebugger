@@ -1,5 +1,5 @@
 Class {
-	#name : #ACDUpdate,
+	#name : #ACDAnnouncerUpdate,
 	#superclass : #Announcement,
 	#category : #'ACD-Glamour-Interface'
 }
