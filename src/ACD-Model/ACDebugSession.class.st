@@ -46,7 +46,9 @@ ACDebugSession >> executingSubscription [
 ]
 
 { #category : #testing }
-ACDebugSession >> hasReceiver [
+ACDebugSession >> hasMoreActiveSubscriptions [
+
+	^ announcerModel hasMoreActiveSubscriptions
 ]
 
 { #category : #initialization }
@@ -102,6 +104,7 @@ ACDebugSession >> sender [
 
 { #category : #accessing }
 ACDebugSession >> senderContext [
+
 	^ senderContext
 ]
 
@@ -109,6 +112,18 @@ ACDebugSession >> senderContext [
 ACDebugSession >> stackFilterFor: aContext [ 
 
 	^ self class stackFilterFor: aContext 
+]
+
+{ #category : #'as yet unclassified' }
+ACDebugSession >> stepIntoWhileFalse: aBlock [
+
+	aBlock whileFalse: [ self stepInto ]
+]
+
+{ #category : #'as yet unclassified' }
+ACDebugSession >> stepIntoWhileTrue: aBlock [
+
+	aBlock whileTrue: [ self stepInto ]
 ]
 
 { #category : #initialization }
@@ -121,21 +136,26 @@ ACDebugSession >> stepThroughRegistryDeliveryContextFor: anAnnouncerContext [
 
 { #category : #'as yet unclassified' }
 ACDebugSession >> stepToNextSubscription [
-	|ctx subscription|
+	| subscription|
 	
+	"Step over the delivery of the current announcement."
+	self stepOver: announcerModel announcementDeliveryLoopContext.
 	
-	self stepOver: announcerModel announcementDeliveryLoopContext.	"Step over the delivery of the current announcement. TODO: take exceptions into account."
-	[ self context method selector ~=  #deliver: or: [self context closure isNil] ] whileTrue: [ self stepInto ]. "locate the context in which the subscripton delivers it's announcer"
+	"If there was a halt, do not perform any more actions."
+	(self context selector = #halt) ifTrue: [ "Update the debugger" ^ self ].
+	
+	"Locate the context in which the subscriptin delivers it's announcer"
+	self stepIntoWhileTrue: [ (self context selector ~=  #deliver: or: [self context closure isNil]) and: [ 
+		self context selector ~= #deliver:to: ] ]. 
 
-
+	"If there are no more subscriptions do nothing. Normally this should not happen."
+	(self context selector = #deliver:to:) ifTrue: [ ^ self ].
 
 	"For now only message sends are handled"
 	"Go through the stack until the message send is executed."
-	"Must take into account unhandled exceptions"
-	"GTDebugger debugCurrentProcess ."
 	subscription := self context receiver.
-	[self context receiver == subscription subscriber and: [
-		self context method selector  = subscription action selector]] whileFalse: [ self stepInto ].
+	self stepIntoWhileFalse: [self context receiver == subscription subscriber and: [
+		self context method selector = subscription action selector]].
 
 	self updateFromReceiverContext: self context
 	

@@ -16,11 +16,9 @@ Class {
 		'context',
 		'receiverContext',
 		'announcement',
-		'executingSubscription',
-		'pendingSubscriptions',
-		'executedSubscriptions',
-		'idleSubscriptions',
-		'allSubscriptions'
+		'executingSubscriptionIndex',
+		'activeSubscriptions',
+		'idleSubscriptions'
 	],
 	#category : #'ACD-Model'
 }
@@ -40,7 +38,10 @@ ACDAnnouncerModel class >> forAnnouncerContext: anAnnouncerContext registryConte
 { #category : #'as yet unclassified' }
 ACDAnnouncerModel >> allSubscriptions [
 
-	^ allSubscriptions
+	^ OrderedCollection new  
+		addAll: idleSubscriptions; 
+		addAll: activeSubscriptions;
+		yourself
 	
 ]
 
@@ -71,7 +72,7 @@ ACDAnnouncerModel >> context [
 { #category : #accessing }
 ACDAnnouncerModel >> executingSubscription [
 
-	^ executingSubscription
+	^ activeSubscriptions at: executingSubscriptionIndex 
 ]
 
 { #category : #initialization }
@@ -87,10 +88,10 @@ ACDAnnouncerModel >> forAnnouncerContext: announcerContext receiverContext: aRec
 		stackFilter := self stackFilterFor: aReceiverContext sender.
 		(stackFilter locateAnnouncementDelivery) isNil ifTrue: [ 
 			^ self ]. "aContext was not created as direct result of an announcemnt."
-		"self halt."
+		
 		announcement := stackFilter extractAnnouncement.
-		executingSubscription := stackFilter extractExecutingSubscription. 
-		allSubscriptions := stackFilter extractAllSubscriptions.
+		executingSubscriptionIndex := stackFilter extractExecutingSubscriptionIndex. 
+		activeSubscriptions := Array withAll: stackFilter extractActiveSubscriptions.
 		
 		receiverContext := aReceiverContext ]
 	
@@ -111,13 +112,19 @@ ACDAnnouncerModel >> forAnnouncerContext: anAnnouncerContext registryContext: aR
 	context := anAnnouncerContext.
 
 	announcement := aRegistryContext tempAt: 1.
-	allSubscriptions := aRegistryContext tempAt: 2.
+	"allSubscriptions := aRegistryContext tempAt: 2."
 		
 	
 	
 	
 	
 	
+]
+
+{ #category : #testing }
+ACDAnnouncerModel >> hasMoreActiveSubscriptions [
+
+	^ executingSubscriptionIndex < activeSubscriptions size
 ]
 
 { #category : #initialization }
@@ -136,11 +143,9 @@ ACDAnnouncerModel >> reset [
 { #category : #initialization }
 ACDAnnouncerModel >> resetSubscriptions [
 
-	executingSubscription := nil.
-	pendingSubscriptions := OrderedCollection new.
-	executedSubscriptions := OrderedCollection new.
-	idleSubscriptions := OrderedCollection new.
-	allSubscriptions := OrderedCollection new.
+	executingSubscriptionIndex := 0.
+	activeSubscriptions := Array new.
+	idleSubscriptions := Array new.
 ]
 
 { #category : #private }

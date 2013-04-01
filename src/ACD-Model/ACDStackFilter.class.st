@@ -14,7 +14,7 @@ ACDStackFilter class >> forContext: aContext [
 ]
 
 { #category : #'accessing actions' }
-ACDStackFilter >> extractAllSubscriptions [
+ACDStackFilter >> extractActiveSubscriptions [
 
 	^ context ifNotNilDo: [:aContext| aContext sender sender sender tempAt: 2]
 ]
@@ -32,6 +32,15 @@ ACDStackFilter >> extractExecutingSubscription [
 	^ context ifNotNilDo: [:aContext||deliveryContext|
 		deliveryContext := aContext sender sender sender.
 		(deliveryContext tempAt: 2) at:  (deliveryContext tempAt: 4)  ]
+]
+
+{ #category : #'accessing actions' }
+ACDStackFilter >> extractExecutingSubscriptionIndex [
+	
+
+	^ context ifNotNilDo: [:aContext||deliveryContext|
+		deliveryContext := aContext sender sender sender.
+		deliveryContext tempAt: 4 ]
 ]
 
 { #category : #'filtering actions' }
@@ -104,7 +113,6 @@ ACDStackFilter >> locateAnnouncementDeliveryLoopContext [
 
 	^ self 
 		locateAnnouncementDelivery;
-		sender;
 		sender;
 		sender;
 		sender;
