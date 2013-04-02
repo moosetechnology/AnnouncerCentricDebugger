@@ -68,7 +68,7 @@ ACGlamourDebugger class >> initialize [
 	super initialize.
 
 	"Add ourselves to registry. See [Smalltalk tools]" 
-	Smalltalk tools registerDebugger: self.
+	Smalltalk tools registerDebugger: self withRank: 10.
 ]
 
 { #category : #opening }
@@ -201,6 +201,7 @@ ACGlamourDebugger >> announcerIn: composite [
 	composite dynamic
 		display: [ :each | 
 			GTInspector new first
+				fixedSizePanes: 1; "Only one"
 				noTitle;
 				noActions;
 				showFirst: [ :a | a custom: (ACDAnnouncerBrowser new debugger: self; startOn: each) ];
@@ -319,6 +320,17 @@ ACGlamourDebugger >> openFullNoSuspendLabel: aString [
 	"TODO: why is this necessy here? I took it from the current debugger"
 	"errorWasInUIProcess := UIManager default spawnNewProcessIfThisIsUI: interruptedProcess"
 	
+]
+
+{ #category : #opening }
+ACGlamourDebugger >> openWith: aRenderer [
+	|window|
+	
+	window := super openWith: aRenderer.
+	window 
+		width: 1000; 
+		height: 600.
+	^ window
 ]
 
 { #category : #initialization }
