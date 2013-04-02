@@ -6,10 +6,12 @@ Class {
 
 { #category : #opening }
 ACGlamourDebugger class >> debugBasedOnSession: aSession [
-
-	self new 
-		process: aSession process controller: nil context: aSession context;
-		open
+	|debugger|
+	
+	debugger := self new. 
+	debugger process: aSession process controller: nil context: aSession context.
+	debugger session errorWasInUIProcess: aSession errorWasInUIProcess.
+	debugger open
 ]
 
 { #category : #opening }
