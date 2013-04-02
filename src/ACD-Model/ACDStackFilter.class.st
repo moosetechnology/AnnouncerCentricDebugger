@@ -74,8 +74,8 @@ ACDStackFilter >> filterDeliveryToReceiver [
 	[ context receiver isClosure or: [context isClosureContext ] ]
 		whileTrue: [context := context sender].
 	
-	"If this context represents the method AnnouncementSubscription>>delived: then an announcer is involved."
-	(context isNil not and: [context receiver class = AnnouncementSubscription ]) 
+	"If this context represents the method delived: froma subscription then an announcer is involved."
+	(context isNil not and: [context receiver class = AnnouncementSubscription or: [ context receiver class = WeakAnnouncementSubscription ] ]) 
 		ifTrue: [ ^ context ] ifFalse: [ self filterFailed. ^ self ]
 ]
 
