@@ -1,5 +1,5 @@
 "
-ConfigurationOfAnnouncerCentricDebugger loadDefault
+ConfigurationOfAnnouncerCentricDebugger loadDevelopment
 "
 Class {
 	#name : #ConfigurationOfAnnouncerCentricDebugger,
@@ -57,7 +57,12 @@ ConfigurationOfAnnouncerCentricDebugger class >> isMetacelloConfig [
 
 { #category : #loading }
 ConfigurationOfAnnouncerCentricDebugger class >> loadDefault [
-	(self project version: 'default') load
+	self loadDevelopment
+]
+
+{ #category : #loading }
+ConfigurationOfAnnouncerCentricDebugger class >> loadDevelopment [
+	(self project version: #development) load
 ]
 
 { #category : #accessing }
@@ -67,15 +72,15 @@ ConfigurationOfAnnouncerCentricDebugger class >> project [
 ]
 
 { #category : #baselines }
-ConfigurationOfAnnouncerCentricDebugger >> default: spec [ 
-	<version: 'default'>
+ConfigurationOfAnnouncerCentricDebugger >> baseline01: spec [ 
+	<version: '0.1-baseline'>
 	
 	spec for: #common do: [
-		spec blessing: #default.
+		spec blessing: #baseline.
 		spec repository: 'http://www.smalltalkhub.com/mc/AndreiChis/AnnouncerCentricDebugger/main'.
 		spec 
-			package: 'ACD-Model';
-			package: 'ACD-Glamour-Interface' with: [spec requires: #('Core')].
+			package: 'ACD-Model' with: [spec requires: #('NewDebugger-Core')];
+			package: 'ACD-Glamour-Interface' with: [spec requires: #('Core' 'DebuggerExtensions')].
 
 		spec group: 'default' with: #(
 			'Core'
@@ -84,7 +89,23 @@ ConfigurationOfAnnouncerCentricDebugger >> default: spec [
 			'ACD-Model' ).
 		spec group: 'UI' with: #(
 			'ACD-Glamour-Interface' ).
+			
+		spec project: 'NewDebugger-Core' with: [
+				spec
+					className: 'ConfigurationOfNewDebugger';
+					file: 'ConfigurationOfNewDebugger';
+					version: 'default';
+					loads: 'Core';
+					repository: 'http://www.smalltalkhub.com/mc/Pharo/Debugger/main' ].
+		spec package: 'DebuggerExtensions' with: [ spec repository: 'http://www.smalltalkhub.com/mc/AndreiChis/Playground/main' ]
 	]
+]
+
+{ #category : #baselines }
+ConfigurationOfAnnouncerCentricDebugger >> development: spec [
+	<symbolicVersion: #'development'>
+
+	spec for: #'common' version: '0.1-baseline'
 ]
 
 { #category : #accessing }
