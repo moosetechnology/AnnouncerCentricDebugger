@@ -278,9 +278,10 @@ ACGlamourDebugger >> debuggerTitle [
 { #category : #accessing }
 ACGlamourDebugger >> debuggersForContext: aContext [
 
-	^ (Smalltalk tools filterDebuggersForContext: aContext)
-		remove: self class ifAbsent: [  ];
-		yourself
+	"Ungly check to make sure the debugger will work until everything is in the image"
+	(Smalltalk tools respondsTo: #debuggersForContext:excluding:) 
+		ifTrue: [ ^ (Smalltalk tools debuggersForContext: aContext excluding: self class)]
+		ifFalse: [ ^ OrderedCollection new ]
 ]
 
 { #category : #actions }
