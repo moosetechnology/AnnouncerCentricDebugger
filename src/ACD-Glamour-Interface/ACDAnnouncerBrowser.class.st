@@ -29,6 +29,7 @@ ACDAnnouncerBrowser >> announcementIn: aComposite [
 	GTObjectVariablesBrowser new variablesIn: aComposite.
 	aComposite presentations last 
 		title: 'Announcement';
+		display: [ :aSession | aSession announcement gtInspectorRetrieveVariableValuePairs ];
 		selectionAct: [:each  :value|  each selection explore] on: $i entitled: 'Explore' 
 			
 	"aComposite dynamic 
@@ -46,6 +47,7 @@ ACDAnnouncerBrowser >> announcerIn: aComposite [
 	GTObjectVariablesBrowser new variablesIn: aComposite.
 	aComposite presentations last 
 		title: 'Announcer';
+		display: [ :aSession | aSession announcer gtInspectorRetrieveVariableValuePairs ];
 		selectionAct: [:each  :value|  each selection explore] on: $i entitled: 'Explore' 
 
 	"|announcerPresentation|
@@ -73,6 +75,13 @@ ACDAnnouncerBrowser >> compose [
 		browser row: #components.
 		browser transmit to: #components; andShow: [:aComposite | 
 			self componentsIn: aComposite ].
+		
+		browser transmit 
+			to: #components port: #selection; 
+			from: #components port: #entity ;
+			when: [ :aSession | aSession notNil ];
+			transformed: [ :aSession |  aSession executingSubscription  ].
+		
 		browser transmit from: #components port: #strongSelection; toOutsidePort: #selection.
 		
 		"browser transmit from: #components port: #selection; toWatcher; andShow: [:a |
