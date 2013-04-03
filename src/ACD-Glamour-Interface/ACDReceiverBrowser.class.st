@@ -111,6 +111,7 @@ ACDReceiverBrowser >> compose [
 		doItReceiver: [:receiverContext | receiverContext receiver ];
 		format: [:receiverContext | receiverContext  sourceCode asText makeSelectorBold];
 		smalltalkClass: [ :receiverContext | receiverContext methodClass ];
+		act: [:each|  each entity receiver explore] on: $i entitled: 'Explore';
 		with: [ :presentation | self installActionsFor: presentation ]
 		"updateOn: Announcement from: self."
 	

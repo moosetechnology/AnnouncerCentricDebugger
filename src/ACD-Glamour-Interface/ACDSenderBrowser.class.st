@@ -15,6 +15,7 @@ ACDSenderBrowser >> compose [
 		doItReceiver: [:senderContext | senderContext receiver ];
 		format: [:senderContext |  senderContext  sourceCode asText makeSelectorBold];
 		smalltalkClass: [ :senderContext | senderContext methodClass ];
+		act: [:each|  each entity receiver explore] on: $i entitled: 'Explore';
 		with: [ :code | self installActionsFor: code ]
 ]
 

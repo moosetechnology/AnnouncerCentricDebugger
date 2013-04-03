@@ -403,6 +403,7 @@ ACGlamourDebugger >> stackIn: composite [
 		showOnly: 50;
 		display: #stack;
 		format: [ :each | String streamContents: [:stream | each printDebugOn: stream ] ];
+		selectionAct: [:each|  each selection explore] on: $i entitled: 'Explore';
 		with: [ :list | self installStackActionsFor: list ]
 ]
 
