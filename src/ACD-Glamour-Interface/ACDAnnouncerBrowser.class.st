@@ -25,24 +25,36 @@ ACDAnnouncerBrowser >> addStepToNextSubscriptionActionFor: aPresentation to: aCo
 { #category : #building }
 ACDAnnouncerBrowser >> announcementIn: aComposite [ 
 			
-	aComposite dynamic 
+	"Not such a nice way to reuse code"
+	GTObjectVariablesBrowser new variablesIn: aComposite.
+	aComposite presentations last 
+		title: 'Announcement';
+		selectionAct: [:each  :value|  each selection explore] on: $i entitled: 'Explore' 
+			
+	"aComposite dynamic 
 		title: 'Announcement';
 		display: [:aSession | 
 				GTObjectVariablesBrowser new browser 
 					noTitle; 
-					startOn: aSession announcement].
+					startOn: aSession announcement]."
 ]
 
 { #category : #building }
 ACDAnnouncerBrowser >> announcerIn: aComposite [ 
-	|announcerPresentation|
+
+	"Not such a nice way to reuse the code"
+	GTObjectVariablesBrowser new variablesIn: aComposite.
+	aComposite presentations last 
+		title: 'Announcer';
+		selectionAct: [:each  :value|  each selection explore] on: $i entitled: 'Explore' 
+
+	"|announcerPresentation|
 	
 	announcerPresentation := aComposite dynamic 
 		title: 'Announcer';
 		display: [:aSession | 
-				GTObjectVariablesBrowser new browser noTitle; startOn: aSession announcer].
-			
-	self installAnnouncerActionsIn: announcerPresentation. 
+				GTObjectVariablesBrowser new browser noTitle; startOn: aSession announcer]."
+
 ]
 
 { #category : #building }
@@ -61,7 +73,11 @@ ACDAnnouncerBrowser >> compose [
 		browser row: #components.
 		browser transmit to: #components; andShow: [:aComposite | 
 			self componentsIn: aComposite ].
-		browser transmit from: #components; toOutsidePort: #selection ].
+		browser transmit from: #components port: #strongSelection; toOutsidePort: #selection.
+		
+		"browser transmit from: #components port: #selection; toWatcher; andShow: [:a |
+			a dynamic display: [:anObject | GLMTextPresentation  new ]]"].
+				"GTInspector startOn: anObject ] ] ]."
 	
 
 ]
@@ -95,12 +111,21 @@ ACDAnnouncerBrowser >> installAnnouncerActionsIn: aPresentation [
 ]
 
 { #category : #'building actions' }
+ACDAnnouncerBrowser >> installInspectActionsIn: aPresentation [ 
+
+	aPresentation 
+		selectionAct: [:each  :value|  each selection explore] on: $i entitled: 'Explore' 
+
+]
+
+{ #category : #'building actions' }
 ACDAnnouncerBrowser >> installSubscriptionsActionsIn: aPresentation [ 
 
 	aPresentation dynamicActions: [ :presentation || newActions |
 		newActions := OrderedCollection new.
 		self addStepToNextSubscriptionActionFor: aPresentation to: newActions.
-		newActions ]
+		newActions ].
+	self installInspectActionsIn: aPresentation 
 ]
 
 { #category : #'as yet unclassified' }
@@ -136,7 +161,7 @@ ACDAnnouncerBrowser >> subscriptionsIn: aComposite [
 
 	aComposite table
 		title: 'Subscriptions';
-		showOnly: 50;
+		showOnly: 100;
 		display: [ :aSession | aSession allSubscriptions ];
 		column: 'Announcement Type' evaluated: [:subscription | 
 			self printAnnouncementTypeFor: subscription announcementClass];
