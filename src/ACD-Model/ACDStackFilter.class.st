@@ -91,6 +91,11 @@ ACDStackFilter >> filterInternalAnnouncerContexts [
 
 	"TODO: fail if we exit announcer contexts"
 	[context  isNil not and: [context method selector ~= #announce: ] ] 
+		whileTrue: [ context := context sender ].
+		
+	context isNil ifTrue: [ self filterFailed. ^ self ].
+	
+	[ context sender notNil and: [ context sender selector = #announce: ] ] 
 		whileTrue: [ context := context sender ]
 ]
 
