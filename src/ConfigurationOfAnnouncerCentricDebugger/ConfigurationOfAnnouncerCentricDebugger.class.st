@@ -94,7 +94,7 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline01: spec [
 				spec
 					className: 'ConfigurationOfNewDebugger';
 					file: 'ConfigurationOfNewDebugger';
-					version: 'default';
+					version: #stable;
 					loads: 'Core';
 					repository: 'http://www.smalltalkhub.com/mc/Pharo/Debugger/main' ].
 		spec package: 'DebuggerExtensions' with: [ spec repository: 'http://www.smalltalkhub.com/mc/AndreiChis/Playground/main' ]
