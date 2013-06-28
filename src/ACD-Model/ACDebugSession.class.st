@@ -168,3 +168,9 @@ ACDebugSession >> updateFromReceiverContext: aContext [
 	announcerContext := (self stackFilterFor: aContext sender) locateAnnouncerEntryPoint.
 	self initializeSenderContext: announcerContext sender announcerContext: announcerContext receiverContext: aContext
 ]
+
+{ #category : #initialization }
+ACDebugSession >> updateFromSenderContext: aContext [
+
+	self initializeSenderContext: aContext announcerContext: announcerModel context receiverContext: receiverContext
+]
