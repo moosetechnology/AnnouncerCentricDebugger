@@ -332,17 +332,6 @@ ACGlamourDebugger >> openFullNoSuspendLabel: aString [
 	
 ]
 
-{ #category : #opening }
-ACGlamourDebugger >> openWith: aRenderer [
-	|window|
-	
-	window := super openWith: aRenderer.
-	window 
-		width: 1000; 
-		height: 600.
-	^ window
-]
-
 { #category : #initialization }
 ACGlamourDebugger >> process: aProcess controller: aController context: aContext [
 
