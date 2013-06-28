@@ -35,6 +35,34 @@ ACDSenderBrowser >> debugger: anObject [
 ACDSenderBrowser >> installActionsFor: aPresentation [
 
 	self installWhereIsActionFor: aPresentation.
+	self installPreviousContextActionFor: aPresentation.
+	self installNextContextActionFor: aPresentation.
+]
+
+{ #category : #building }
+ACDSenderBrowser >> installNextContextActionFor: aPresentation [
+
+	aPresentation 
+		act: [ :textPresentation :context | 
+			self session updateFromSenderContext: context sender.
+			self debugger announce: ACDSenderUpdate.
+			 ]
+		icon: GLMUIThemeExtraIcons glamorousRight
+		on: $w
+		entitled: 'Next context'
+]
+
+{ #category : #building }
+ACDSenderBrowser >> installPreviousContextActionFor: aPresentation [
+
+	aPresentation 
+		act: [ :textPresentation :context | 
+			self session updateFromSenderContext: context sender.
+			self debugger announce: ACDSenderUpdate.
+			 ]
+		icon: GLMUIThemeExtraIcons glamorousLeft 
+		on: $w
+		entitled: 'Previous context'
 ]
 
 { #category : #building }

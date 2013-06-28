@@ -181,6 +181,15 @@ ACGlamourDebugger >> actOnReceiverUpdate [
 
 ]
 
+{ #category : #callbacks }
+ACGlamourDebugger >> actOnSenderUpdate [
+
+	self 
+		updateSender
+
+
+]
+
 { #category : #'building actions' }
 ACGlamourDebugger >> addChangeDebuggerActionFor: aPresentation to: aCollection [
 	
@@ -256,6 +265,7 @@ ACGlamourDebugger >> compose [
 		
 	self on: GLMBrowserClosing send: #actOnBrowserClosing: to: self.
 	self on: ACDReceiverUpdate send: #actOnReceiverUpdate to: self.
+	self on: ACDSenderUpdate send: #actOnSenderUpdate to: self.
 	self on: ACDAnnouncerUpdate send: #actOnAnnouncerUpdate to: self.
 ]
 
@@ -422,6 +432,16 @@ ACGlamourDebugger >> updateReceiver [
 		value: nil;
 		value: self session context.
 	receiverPane update.
+]
+
+{ #category : #updating }
+ACGlamourDebugger >> updateSender [
+	| senderPane |
+	senderPane := self browser paneNamed: #sender.
+	(senderPane port: #entity)
+		value: nil;
+		value: self session senderContext .
+	senderPane update.
 ]
 
 { #category : #updating }
