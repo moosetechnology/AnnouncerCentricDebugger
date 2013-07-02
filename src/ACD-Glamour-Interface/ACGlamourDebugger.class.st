@@ -1,6 +1,6 @@
 Class {
 	#name : #ACGlamourDebugger,
-	#superclass : #GLMCompositePresentation,
+	#superclass : #GTDebugger,
 	#category : #'ACD-Glamour-Interface'
 }
 
@@ -307,6 +307,18 @@ ACGlamourDebugger >> errorWasInUIProcess: aBoolean [
 	self session errorWasInUIProcess: aBoolean
 ]
 
+{ #category : #building }
+ACGlamourDebugger >> installReceiverActionsFor: composite [
+
+	self installDebuggingActionsFor: composite
+]
+
+{ #category : #building }
+ACGlamourDebugger >> installSenderActionsFor: composite [
+
+	self installDebuggingActionsFor: composite
+]
+
 { #category : #'building actions' }
 ACGlamourDebugger >> installStackActionsFor: aPresentation [
 
@@ -341,16 +353,15 @@ ACGlamourDebugger >> process: aProcess controller: aController context: aContext
 { #category : #building }
 ACGlamourDebugger >> receiverIn: composite [
 
-	composite custom: (ACDReceiverBrowser new debugger: self)
-
-	"composite smalltalkCode
+	composite smalltalkCode
+		when: [:value | value notNil ];
 		title: [:receiverContext | GTInspector new printObjectAsAnItem: receiverContext receiver ];
 		doItReceiver: [:receiverContext | receiverContext receiver ];
-		format: [:receiverContext | receiverContext  sourceCode ];
+		format: [:receiverContext | receiverContext  sourceCode];
 		smalltalkClass: [ :receiverContext | receiverContext methodClass ];
-		with: [ :code | self installCodeActionsFor: code ]"
-
-	"composite custom: ACDReceiverBrowser new first noTitle; noActions."
+		act: [:each|  each entity receiver explore] on: $i entitled: 'Explore';
+		with: [ :presentation | self installReceiverActionsFor: presentation ]
+		"updateOn: Announcement from: self."
 ]
 
 { #category : #actions }
@@ -370,16 +381,13 @@ ACGlamourDebugger >> selectedContext [
 { #category : #building }
 ACGlamourDebugger >> senderIn: composite [
 
-	composite custom: (ACDSenderBrowser new debugger: self)
-
-	"composite smalltalkCode
+	composite smalltalkCode
 		title: [:senderContext | GTInspector new printObjectAsAnItem: senderContext receiver ];
 		doItReceiver: [:senderContext | senderContext receiver ];
 		format: [:senderContext |  senderContext  sourceCode asText makeSelectorBold];
 		smalltalkClass: [ :senderContext | senderContext methodClass ];
-		with: [ :code | self installCodeActionsFor: code ]
-"
-	"composite custom: ACDSenderBrowser new first noActions; noTitle "
+		act: [:each|  each entity receiver explore] on: $i entitled: 'Explore';
+		with: [ :code | self installSenderActionsFor: code ]
 ]
 
 { #category : #accessing }
