@@ -190,20 +190,6 @@ ACGlamourDebugger >> actOnSenderUpdate [
 
 ]
 
-{ #category : #'building actions' }
-ACGlamourDebugger >> addChangeDebuggerActionFor: aPresentation to: aCollection [
-	
-	(self debuggersForContext: self selectedContext)
-		do: [ :aDebuggerClass | 
-			aCollection
-				add:
-					(GLMGenericAction new
-						action: [ self debug: self selectedContext using: aDebuggerClass ];
-						title: aDebuggerClass defaultTitle;
-						category: 'Available Debuggers';
-						yourself) ]
-]
-
 { #category : #building }
 ACGlamourDebugger >> announcerIn: composite [
 
@@ -224,20 +210,39 @@ ACGlamourDebugger >> browser [
 	^ self presentations first
 ]
 
-{ #category : #building }
-ACGlamourDebugger >> compose [
+{ #category : #actions }
+ACGlamourDebugger >> debug: aContext using: aDebuggerClass [
+	| currentSession  |
+	
+	currentSession := self session.
+	self detachSession.
+	self browser close.
+	currentSession updateContextTo: aContext.
+	aDebuggerClass debugBasedOnSession: currentSession
+]
 
-	self title: self debuggerTitle.
-	self tabulator with: [:browser | 
-		browser
-			column: [ :column | 
-						column
-							row: #receiver;
-							row: #announcer;
-							row: #sender];
-			column: #stack.
-		
-		browser transmit
+{ #category : #building }
+ACGlamourDebugger >> debuggerStructureIn: browser [
+	
+	browser
+		column: [ :column | 
+			column
+				row: #receiver;
+				row: #announcer;
+				row: #sender];
+		column: #stack.
+]
+
+{ #category : #accessing }
+ACGlamourDebugger >> debuggerTitle [
+
+	^ self class defaultTitle 
+]
+
+{ #category : #building }
+ACGlamourDebugger >> debuggerTransmissionsIn: browser [
+
+	browser transmit
 			to: #receiver;
 			transformed: [:session | session receiverContext];
 			andShow: [ :composite | self receiverIn: composite ].	
@@ -261,29 +266,7 @@ ACGlamourDebugger >> compose [
 			from: #receiver port: #entity;
 			to: #receiver port: #selectionInterval;
 			when: [:receiverContext | receiverContext notNil ];
-			transformed: [:receiverContext | self session pcRangeForContext: receiverContext] ].
-		
-	self on: GLMBrowserClosing send: #actOnBrowserClosing: to: self.
-	self on: ACDReceiverUpdate send: #actOnReceiverUpdate to: self.
-	self on: ACDSenderUpdate send: #actOnSenderUpdate to: self.
-	self on: ACDAnnouncerUpdate send: #actOnAnnouncerUpdate to: self.
-]
-
-{ #category : #actions }
-ACGlamourDebugger >> debug: aContext using: aDebuggerClass [
-	| currentSession  |
-	
-	currentSession := self session.
-	self detachSession.
-	self browser close.
-	currentSession updateContextTo: aContext.
-	aDebuggerClass debugBasedOnSession: currentSession
-]
-
-{ #category : #accessing }
-ACGlamourDebugger >> debuggerTitle [
-
-	^ self class defaultTitle 
+			transformed: [:receiverContext | self session pcRangeForContext: receiverContext]
 ]
 
 { #category : #accessing }
@@ -319,21 +302,6 @@ ACGlamourDebugger >> installSenderActionsFor: composite [
 	self installDebuggingActionsFor: composite
 ]
 
-{ #category : #'building actions' }
-ACGlamourDebugger >> installStackActionsFor: aPresentation [
-
-	self installStackDynamicActionsFor: aPresentation.
-]
-
-{ #category : #'building actions' }
-ACGlamourDebugger >> installStackDynamicActionsFor: aPresentation [
-	
-	aPresentation dynamicActionsOnSelection: [ :presentation || newActions |
-		newActions := OrderedCollection new.
-		self addChangeDebuggerActionFor: aPresentation to: newActions.
-		newActions ]
-]
-
 { #category : #opening }
 ACGlamourDebugger >> openFullNoSuspendLabel: aString [
 	"TODO: do not ignore the title"
@@ -362,6 +330,19 @@ ACGlamourDebugger >> receiverIn: composite [
 		act: [:each|  each entity receiver explore] on: $i entitled: 'Explore';
 		with: [ :presentation | self installReceiverActionsFor: presentation ]
 		"updateOn: Announcement from: self."
+]
+
+{ #category : #building }
+ACGlamourDebugger >> registerActions [
+
+"	self on: GLMBrowserClosing send: #actOnBrowserClosing: to: self.
+	self on: DebugActionExecuted send: #updateStackPane to: self."
+
+		
+	self on: GLMBrowserClosing send: #actOnBrowserClosing: to: self.
+	self on: ACDReceiverUpdate send: #actOnReceiverUpdate to: self.
+	self on: ACDSenderUpdate send: #actOnSenderUpdate to: self.
+	self on: ACDAnnouncerUpdate send: #actOnAnnouncerUpdate to: self.
 ]
 
 { #category : #actions }
@@ -411,7 +392,7 @@ ACGlamourDebugger >> stackIn: composite [
 		display: #stack;
 		format: [ :each | String streamContents: [:stream | each printDebugOn: stream ] ];
 		selectionAct: [:each|  each selection explore] on: $i entitled: 'Explore';
-		with: [ :list | self installStackActionsFor: list ]
+		with: [ :list | "self installStackActionsFor: list" ]
 ]
 
 { #category : #updating }
@@ -446,10 +427,4 @@ ACGlamourDebugger >> updateStack [
 
 	(self browser paneNamed: #stack) update
 	
-]
-
-{ #category : #callbacks }
-ACGlamourDebugger >> windowIsClosing [ 
-
-	self announce: GLMBrowserClosing new
 ]
