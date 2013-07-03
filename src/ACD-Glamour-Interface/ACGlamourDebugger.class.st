@@ -204,12 +204,6 @@ ACGlamourDebugger >> announcerIn: composite [
 
 ]
 
-{ #category : #accessing }
-ACGlamourDebugger >> browser [ 
-
-	^ self presentations first
-]
-
 { #category : #actions }
 ACGlamourDebugger >> debug: aContext using: aDebuggerClass [
 	| currentSession  |
@@ -233,18 +227,12 @@ ACGlamourDebugger >> debuggerStructureIn: browser [
 		column: #stack.
 ]
 
-{ #category : #accessing }
-ACGlamourDebugger >> debuggerTitle [
-
-	^ self class defaultTitle 
-]
-
 { #category : #building }
 ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 
 	browser transmit
 			to: #receiver;
-			transformed: [:session | session receiverContext];
+			transformed: [:session | session context];
 			andShow: [ :composite | self receiverIn: composite ].	
 		browser transmit
 			to: #announcer;
@@ -267,15 +255,6 @@ ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 			to: #receiver port: #selectionInterval;
 			when: [:receiverContext | receiverContext notNil ];
 			transformed: [:receiverContext | self session pcRangeForContext: receiverContext]
-]
-
-{ #category : #accessing }
-ACGlamourDebugger >> debuggersForContext: aContext [
-
-	"Ungly check to make sure the debugger will work until everything is in the image"
-	(Smalltalk tools respondsTo: #debuggersForContext:excluding:) 
-		ifTrue: [ ^ (Smalltalk tools debuggersForContext: aContext excluding: self class)]
-		ifFalse: [ ^ OrderedCollection new ]
 ]
 
 { #category : #actions }
@@ -340,9 +319,12 @@ ACGlamourDebugger >> registerActions [
 
 		
 	self on: GLMBrowserClosing send: #actOnBrowserClosing: to: self.
+	self on: DebugActionExecuted send: #updateBrowser to: self.
+	
+	"
 	self on: ACDReceiverUpdate send: #actOnReceiverUpdate to: self.
 	self on: ACDSenderUpdate send: #actOnSenderUpdate to: self.
-	self on: ACDAnnouncerUpdate send: #actOnAnnouncerUpdate to: self.
+	self on: ACDAnnouncerUpdate send: #actOnAnnouncerUpdate to: self."
 ]
 
 { #category : #actions }
@@ -356,7 +338,7 @@ ACGlamourDebugger >> resume [
 { #category : #accessing }
 ACGlamourDebugger >> selectedContext [
 
-	^ ((self browser paneNamed: #stack) port: #selection) value
+	^ self session context
 ]
 
 { #category : #building }
@@ -371,18 +353,6 @@ ACGlamourDebugger >> senderIn: composite [
 		with: [ :code | self installSenderActionsFor: code ]
 ]
 
-{ #category : #accessing }
-ACGlamourDebugger >> session [
-
-	^ (self browser pane port: #entity) value
-]
-
-{ #category : #accessing }
-ACGlamourDebugger >> session: aSession [
-
-	 (self browser pane port: #entity) value: aSession
-]
-
 { #category : #building }
 ACGlamourDebugger >> stackIn: composite [
 
@@ -395,36 +365,13 @@ ACGlamourDebugger >> stackIn: composite [
 		with: [ :list | "self installStackActionsFor: list" ]
 ]
 
-{ #category : #updating }
-ACGlamourDebugger >> updateAnnouncer [
-
-	(self browser paneNamed: #announcer) update
-
-]
-
-{ #category : #updating }
-ACGlamourDebugger >> updateReceiver [
-	| receiverPane |
-	receiverPane := self browser paneNamed: #receiver.
-	(receiverPane port: #entity)
-		value: nil;
-		value: self session context.
-	receiverPane update.
-]
-
-{ #category : #updating }
-ACGlamourDebugger >> updateSender [
-	| senderPane |
-	senderPane := self browser paneNamed: #sender.
-	(senderPane port: #entity)
-		value: nil;
-		value: self session senderContext .
-	senderPane update.
-]
-
-{ #category : #updating }
-ACGlamourDebugger >> updateStack [
-
-	(self browser paneNamed: #stack) update
+{ #category : #building }
+ACGlamourDebugger >> updateBrowser [
+	| browserPane session |
 	
+	session := self session.
+	browserPane := self browser pane.
+	(browserPane port: #entity) silentValue: nil.
+	(browserPane port: #entity) value: session.
+	browserPane update.
 ]
