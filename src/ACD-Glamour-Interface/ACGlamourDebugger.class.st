@@ -154,23 +154,6 @@ ACGlamourDebugger class >> spanSessionForContext: aContext fromProcess: anInterr
 	^ self sessionClass process: anInterruptedProcess context: aContext 
 ]
 
-{ #category : #callbacks }
-ACGlamourDebugger >> actOnAnnouncerUpdate [
-
-	self 
-		updateAnnouncer;
-		updateStack;
-		updateReceiver
-
-
-]
-
-{ #category : #callbacks }
-ACGlamourDebugger >> actOnBrowserClosing: ann [
-
-	self session ifNotNil: [:aSession|  aSession terminate ]
-]
-
 { #category : #'building presentations' }
 ACGlamourDebugger >> announcerIn: composite [
 
@@ -189,17 +172,6 @@ ACGlamourDebugger >> announcerIn: composite [
 ACGlamourDebugger >> currentContext [ 
 
 	^ self session context
-]
-
-{ #category : #actions }
-ACGlamourDebugger >> debug: aContext using: aDebuggerClass [
-	| currentSession  |
-	
-	currentSession := self session.
-	self detachSession.
-	self browser close.
-	currentSession updateContextTo: aContext.
-	aDebuggerClass debugBasedOnSession: currentSession
 ]
 
 { #category : #building }
@@ -244,18 +216,6 @@ ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 			transformed: [:receiverContext | self session pcRangeForContext: receiverContext]
 ]
 
-{ #category : #actions }
-ACGlamourDebugger >> detachSession [
-
-	(self browser pane port: #entity) silentValue: nil
-]
-
-{ #category : #initialization }
-ACGlamourDebugger >> errorWasInUIProcess: aBoolean [
-
-	self session errorWasInUIProcess: aBoolean
-]
-
 { #category : #'building actions' }
 ACGlamourDebugger >> installReceiverActionsFor: aPresentation [
 
@@ -266,16 +226,6 @@ ACGlamourDebugger >> installReceiverActionsFor: aPresentation [
 ACGlamourDebugger >> installSenderActionsFor: aPresentation [
 
 	self installActionsForRootPragmas: { #ACDSenderDebuggingAction } in: aPresentation
-]
-
-{ #category : #opening }
-ACGlamourDebugger >> openFullNoSuspendLabel: aString [
-	"TODO: do not ignore the title"
-	
-	self open.
-	"TODO: why is this necessy here? I took it from the current debugger"
-	"errorWasInUIProcess := UIManager default spawnNewProcessIfThisIsUI: interruptedProcess"
-	
 ]
 
 { #category : #initialization }
@@ -296,14 +246,6 @@ ACGlamourDebugger >> receiverIn: composite [
 		act: [:each |  each entity receiver explore] on: $i entitled: 'Explore';
 		with: [ :presentation | self installReceiverActionsFor: presentation ]
 		"updateOn: Announcement from: self."
-]
-
-{ #category : #building }
-ACGlamourDebugger >> registerActions [
-
-	self on: GLMBrowserClosing send: #actOnBrowserClosing: to: self.
-	self on: DebugActionExecuted send: #updateBrowser to: self.
-
 ]
 
 { #category : #actions }
@@ -343,17 +285,6 @@ ACGlamourDebugger >> stackIn: composite [
 		selectionAct: [:each|  each selection explore] on: $i entitled: 'Explore';
 		with: [ :list | "self installStackActionsFor: list" ]
 
-]
-
-{ #category : #updating }
-ACGlamourDebugger >> updateBrowser [
-	| browserPane session |
-	
-	session := self session.
-	browserPane := self browser pane.
-	(browserPane port: #entity) silentValue: nil.
-	(browserPane port: #entity) value: session.
-	browserPane update.
 ]
 
 { #category : #updating }
