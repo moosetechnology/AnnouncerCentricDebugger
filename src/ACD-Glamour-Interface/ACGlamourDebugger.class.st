@@ -171,26 +171,7 @@ ACGlamourDebugger >> actOnBrowserClosing: ann [
 	self session ifNotNil: [:aSession|  aSession terminate ]
 ]
 
-{ #category : #callbacks }
-ACGlamourDebugger >> actOnReceiverUpdate [
-
-	self 
-		updateStack;
-		updateReceiver
-
-
-]
-
-{ #category : #callbacks }
-ACGlamourDebugger >> actOnSenderUpdate [
-
-	self 
-		updateSender
-
-
-]
-
-{ #category : #building }
+{ #category : #'building presentations' }
 ACGlamourDebugger >> announcerIn: composite [
 
 	composite dynamic
@@ -303,7 +284,7 @@ ACGlamourDebugger >> process: aProcess controller: aController context: aContext
 	self session: (self class spanCompleteSessionForContext: aContext fromProcess: aProcess)
 ]
 
-{ #category : #building }
+{ #category : #'building presentations' }
 ACGlamourDebugger >> receiverIn: composite [
 
 	composite smalltalkCode
@@ -339,7 +320,7 @@ ACGlamourDebugger >> selectedContext [
 	^ self session context
 ]
 
-{ #category : #building }
+{ #category : #'building presentations' }
 ACGlamourDebugger >> senderIn: composite [
 
 	composite smalltalkCode
@@ -351,7 +332,7 @@ ACGlamourDebugger >> senderIn: composite [
 		with: [ :code | self installSenderActionsFor: code ]
 ]
 
-{ #category : #building }
+{ #category : #'building presentations' }
 ACGlamourDebugger >> stackIn: composite [
 
 	composite list	
@@ -361,6 +342,7 @@ ACGlamourDebugger >> stackIn: composite [
 		format: [ :each | String streamContents: [:stream | each printDebugOn: stream ] ];
 		selectionAct: [:each|  each selection explore] on: $i entitled: 'Explore';
 		with: [ :list | "self installStackActionsFor: list" ]
+
 ]
 
 { #category : #updating }
