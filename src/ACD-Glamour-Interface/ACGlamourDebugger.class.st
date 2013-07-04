@@ -263,12 +263,6 @@ ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 			transformed: [:receiverContext | self session pcRangeForContext: receiverContext]
 ]
 
-{ #category : #'building actions' }
-ACGlamourDebugger >> debuggingActionsPragmas [
-
-	^ super debuggingActionsPragmas, { #ACDReceiverDebuggingAction }
-]
-
 { #category : #actions }
 ACGlamourDebugger >> detachSession [
 
@@ -284,7 +278,7 @@ ACGlamourDebugger >> errorWasInUIProcess: aBoolean [
 { #category : #'building actions' }
 ACGlamourDebugger >> installReceiverActionsFor: aPresentation [
 
-	self installDebuggingActionsFor: aPresentation
+	self installActionsForRootPragmas: { #ACDReceiverDebuggingAction } in: aPresentation
 ]
 
 { #category : #'building actions' }
