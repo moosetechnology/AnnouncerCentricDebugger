@@ -97,12 +97,6 @@ ACGlamourDebugger class >> openAndInitializeSessionWith: sessionInitializationBl
 ]
 
 { #category : #opening }
-ACGlamourDebugger class >> openOn: aSession [ 
-
-	self new openOn: aSession
-]
-
-{ #category : #opening }
 ACGlamourDebugger class >> openOnSender: senderContext [ 
 
 	self openAndInitializeSessionWith: [:aSession | 
