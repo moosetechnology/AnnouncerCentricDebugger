@@ -204,6 +204,12 @@ ACGlamourDebugger >> announcerIn: composite [
 
 ]
 
+{ #category : #accessing }
+ACGlamourDebugger >> currentContext [ 
+
+	^ self session context
+]
+
 { #category : #actions }
 ACGlamourDebugger >> debug: aContext using: aDebuggerClass [
 	| currentSession  |
@@ -257,6 +263,12 @@ ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 			transformed: [:receiverContext | self session pcRangeForContext: receiverContext]
 ]
 
+{ #category : #'building actions' }
+ACGlamourDebugger >> debuggingActionsPragmas [
+
+	^ super debuggingActionsPragmas, { #ACDReceiverDebuggingAction }
+]
+
 { #category : #actions }
 ACGlamourDebugger >> detachSession [
 
@@ -269,16 +281,16 @@ ACGlamourDebugger >> errorWasInUIProcess: aBoolean [
 	self session errorWasInUIProcess: aBoolean
 ]
 
-{ #category : #building }
-ACGlamourDebugger >> installReceiverActionsFor: composite [
+{ #category : #'building actions' }
+ACGlamourDebugger >> installReceiverActionsFor: aPresentation [
 
-	self installDebuggingActionsFor: composite
+	self installDebuggingActionsFor: aPresentation
 ]
 
-{ #category : #building }
-ACGlamourDebugger >> installSenderActionsFor: composite [
+{ #category : #'building actions' }
+ACGlamourDebugger >> installSenderActionsFor: aPresentation [
 
-	self installDebuggingActionsFor: composite
+	self installActionsForRootPragmas: { #ACDSenderDebuggingAction } in: aPresentation
 ]
 
 { #category : #opening }
@@ -306,7 +318,7 @@ ACGlamourDebugger >> receiverIn: composite [
 		doItReceiver: [:receiverContext | receiverContext receiver ];
 		format: [:receiverContext | receiverContext  sourceCode];
 		smalltalkClass: [ :receiverContext | receiverContext methodClass ];
-		act: [:each|  each entity receiver explore] on: $i entitled: 'Explore';
+		act: [:each |  each entity receiver explore] on: $i entitled: 'Explore';
 		with: [ :presentation | self installReceiverActionsFor: presentation ]
 		"updateOn: Announcement from: self."
 ]
@@ -314,17 +326,9 @@ ACGlamourDebugger >> receiverIn: composite [
 { #category : #building }
 ACGlamourDebugger >> registerActions [
 
-"	self on: GLMBrowserClosing send: #actOnBrowserClosing: to: self.
-	self on: DebugActionExecuted send: #updateStackPane to: self."
-
-		
 	self on: GLMBrowserClosing send: #actOnBrowserClosing: to: self.
 	self on: DebugActionExecuted send: #updateBrowser to: self.
-	
-	"
-	self on: ACDReceiverUpdate send: #actOnReceiverUpdate to: self.
-	self on: ACDSenderUpdate send: #actOnSenderUpdate to: self.
-	self on: ACDAnnouncerUpdate send: #actOnAnnouncerUpdate to: self."
+
 ]
 
 { #category : #actions }
@@ -347,7 +351,7 @@ ACGlamourDebugger >> senderIn: composite [
 	composite smalltalkCode
 		title: [:senderContext | GTInspector new printObjectAsAnItem: senderContext receiver ];
 		doItReceiver: [:senderContext | senderContext receiver ];
-		format: [:senderContext |  senderContext  sourceCode asText makeSelectorBold];
+		format: [:senderContext |  senderContext  sourceCode];
 		smalltalkClass: [ :senderContext | senderContext methodClass ];
 		act: [:each|  each entity receiver explore] on: $i entitled: 'Explore';
 		with: [ :code | self installSenderActionsFor: code ]
@@ -365,7 +369,7 @@ ACGlamourDebugger >> stackIn: composite [
 		with: [ :list | "self installStackActionsFor: list" ]
 ]
 
-{ #category : #building }
+{ #category : #updating }
 ACGlamourDebugger >> updateBrowser [
 	| browserPane session |
 	
@@ -374,4 +378,20 @@ ACGlamourDebugger >> updateBrowser [
 	(browserPane port: #entity) silentValue: nil.
 	(browserPane port: #entity) value: session.
 	browserPane update.
+]
+
+{ #category : #updating }
+ACGlamourDebugger >> updateReceiverCodeSelection [
+
+	((self browser paneNamed: #receiver) 
+		port: #selectionInterval) 
+			value:  (self session pcRangeForContext:  self currentContext )
+]
+
+{ #category : #updating }
+ACGlamourDebugger >> updateSenderCodeSelection [
+
+	((self browser paneNamed: #sender) 
+		port: #selectionInterval) 
+			value:  (self session pcRangeForContext:  self session senderContext )
 ]
