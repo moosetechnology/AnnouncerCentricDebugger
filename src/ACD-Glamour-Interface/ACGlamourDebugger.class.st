@@ -14,40 +14,6 @@ ACGlamourDebugger class >> debugBasedOnSession: aSession [
 	debugger open
 ]
 
-{ #category : #opening }
-ACGlamourDebugger class >> debugCurrentProcess [
-	| process errorWasInUIProcess |
-	process := Processor activeProcess.
-	errorWasInUIProcess := UIManager default spawnNewProcessIfThisIsUI: process.
-	
-	WorldState
-		addDeferredUIMessage: [[| session announcerContext |
-				
-				session := (self spanSessionForContext: process suspendedContext fromProcess: process)
-				errorWasInUIProcess: errorWasInUIProcess.
-				
-				announcerContext := (ACDStackFilter forContext:  process suspendedContext sender sender) locateAnnouncerEntryPoint.
-				
-				session initializeSenderContext: announcerContext sender 
-					announcerContext: announcerContext 
-					receiverContext: process suspendedContext sender.
-				session inspect.
-				
-				self openOn: session.
-					
-					] value.
-				"on: Error
-				do: [:ex | Debugger primitiveError: 'Orginal error: ' , 'ACD halt' , '.
-	Smalltalk tools debugger error: '
-							, ([ex description]
-									on: Error
-									do: ['a ' , ex class printString]) , ':']"
-								
-								].
-
-	process suspend.
-]
-
 { #category : #accessing }
 ACGlamourDebugger class >> defaultTitle [
 
@@ -69,58 +35,6 @@ ACGlamourDebugger class >> initialize [
 
 	"Add ourselves to registry. See [Smalltalk tools]" 
 	Smalltalk tools registerDebugger: self withRank: 10.
-]
-
-{ #category : #opening }
-ACGlamourDebugger class >> openAndInitializeSessionWith: sessionInitializationBlock [
-
-	| process errorWasInUIProcess |
-	process := Processor activeProcess.
-	errorWasInUIProcess := UIManager default spawnNewProcessIfThisIsUI: process.
-	
-	WorldState
-		addDeferredUIMessage: [[| session |
-					
-			session := (self spanSessionForContext: process suspendedContext fromProcess: process)
-				errorWasInUIProcess: errorWasInUIProcess.
-			sessionInitializationBlock value: session.
-				
-			self openOn: session.]
-				on: Error
-				do: [:ex | ex debug  "Debugger primitiveError: 'Orginal error: ' , 'ACD halt' , '.
-	Smalltalk tools debugger error: '
-							, ([ex description]
-									on: Error
-									do: ['a ' , ex class printString]) , ':'"]].
-
-	process suspend.
-]
-
-{ #category : #opening }
-ACGlamourDebugger class >> openOnSender: senderContext [ 
-
-	self openAndInitializeSessionWith: [:aSession | 
-		aSession 
-			initializeSenderContext: senderContext ]
-]
-
-{ #category : #opening }
-ACGlamourDebugger class >> openOnSender: senderContext announcer: announcerContext [
-
-	self openAndInitializeSessionWith: [:aSession | 
-		aSession 
-			initializeSenderContext: senderContext 
-			announcerContext: announcerContext ]
-]
-
-{ #category : #opening }
-ACGlamourDebugger class >> openOnSender: senderContext announcer: announcerContext receiver: receiverContext [
-
-	self openAndInitializeSessionWith: [:aSession | 
-		aSession 
-			initializeSenderContext: senderContext 
-			announcerContext: announcerContext 
-			receiverContext: receiverContext ]
 ]
 
 { #category : #private }
