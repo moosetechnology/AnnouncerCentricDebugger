@@ -11,7 +11,7 @@ ACDStackDebugAction class >> gtStackActions [
 	^ super gtStackActions
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 ACDStackDebugAction >> appliesToContext: aContext [
 
 	^ (self session receiverContext = self session context and: [

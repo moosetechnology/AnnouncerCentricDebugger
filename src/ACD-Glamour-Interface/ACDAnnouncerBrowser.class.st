@@ -7,29 +7,15 @@ Class {
 	#category : #'ACD-Glamour-Interface'
 }
 
-{ #category : #'building actions' }
-ACDAnnouncerBrowser >> addStepToNextSubscriptionActionFor: aPresentation to: aCollection [
-	self session hasMoreActiveSubscriptions
-		ifTrue: [ 
-			aCollection
-				add:
-					(GLMGenericAction new
-						action: [ 
-									self nextSubscription.
-									self debugger announce: ACDAnnouncerUpdate ];
-						title: 'Next subscription';
-						icon: GLMUIThemeExtraIcons glamorousOver;
-						yourself) ]
-]
-
 { #category : #building }
 ACDAnnouncerBrowser >> announcementIn: aComposite [ 
 
+	"Not such a nice way to reuse the code"
 	GTObjectVariablesBrowser new variablesIn: aComposite.
 	aComposite presentations last 
 		title: 'Announcement';
 		display: [ :aSession | aSession announcement gtInspectorRetrieveVariableValuePairs ];
-		selectionAct: [:each  :value|  each selection explore] on: $i entitled: 'Explore'
+		selectionAct: [ :aPresentation |  aPresentation selection explore] on: $i entitled: 'Explore'
 ]
 
 { #category : #building }
@@ -40,7 +26,7 @@ ACDAnnouncerBrowser >> announcerIn: aComposite [
 	aComposite presentations last 
 		title: 'Announcer';
 		display: [ :aSession | aSession announcer gtInspectorRetrieveVariableValuePairs ];
-		selectionAct: [:each  :value|  each selection explore] on: $i entitled: 'Explore' 
+		selectionAct: [ :aPresentation |  aPresentation selection explore] on: $i entitled: 'Explore' 
 
 
 ]
@@ -89,47 +75,21 @@ ACDAnnouncerBrowser >> debugger: anObject [
 	debugger := anObject 
 ]
 
-{ #category : #'building actions' }
-ACDAnnouncerBrowser >> installAnnouncerActionsIn: aPresentation [ 
+{ #category : #private }
+ACDAnnouncerBrowser >> highlightColorForSubscription: aSubscription [ 
 
-	aPresentation 
-		act: [		
-			self session announcer haltWhenAnnoucerIsNotified.
-			self debugger resume ] 
-		entitled: 'Halt when notified by anyone'.
-		
-	aPresentation 
-		act: [		
-			self session announcer haltWhenAnnoucerIsNotifiedBy: self session sender.
-			self debugger resume ] 
-		entitled: 'Halt when notified by sender'
-]
-
-{ #category : #'building actions' }
-ACDAnnouncerBrowser >> installInspectActionsIn: aPresentation [ 
-
-	aPresentation 
-		selectionAct: [:each  :value|  each selection explore] on: $i entitled: 'Explore' 
-
+	^ self session executingSubscription == aSubscription 
+		ifTrue: [Color lightGray] 
+		ifFalse: [Color transparent] 
 ]
 
 { #category : #'building actions' }
 ACDAnnouncerBrowser >> installSubscriptionsActionsIn: aPresentation [ 
 
-	aPresentation dynamicActions: [ :presentation || newActions |
-		newActions := OrderedCollection new.
-		self addStepToNextSubscriptionActionFor: aPresentation to: newActions.
-		newActions ].
-	self installInspectActionsIn: aPresentation 
+	self debugger installActionsForRootPragmas: { #ACDSubscriptionDebuggingAction } in: aPresentation
 ]
 
-{ #category : #'as yet unclassified' }
-ACDAnnouncerBrowser >> nextSubscription [
-
-	self session stepToNextSubscription
-]
-
-{ #category : #'as yet unclassified' }
+{ #category : #private }
 ACDAnnouncerBrowser >> printAnnouncementTypeFor: anAnnouncementType [
  
 	^ anAnnouncementType isCollection 
@@ -137,12 +97,6 @@ ACDAnnouncerBrowser >> printAnnouncementTypeFor: anAnnouncementType [
 			String streamContents: [:s | anAnnouncementType printElementsOn: s]] 
 		ifFalse: [
 			anAnnouncementType printString]
-]
-
-{ #category : #'as yet unclassified' }
-ACDAnnouncerBrowser >> printReceiverFor: aSubscription [
-
-	^ GTInspector new printObjectAsAnItem: aSubscription subscriber
 ]
 
 { #category : #accessing }
@@ -158,13 +112,13 @@ ACDAnnouncerBrowser >> subscriptionsIn: aComposite [
 		title: 'Subscriptions';
 		showOnly: 100;
 		display: [ :aSession | aSession allSubscriptions ];
-		column: 'Announcement Type' evaluated: [:subscription | 
-			self printAnnouncementTypeFor: subscription announcementClass];
-		column: 'Action' evaluated: [:subscription | 
-			subscription action printString ];
-		textBackgroundColor: [:subscription :aSession| aSession executingSubscription == subscription 
-			ifTrue: [Color lightGray] 
-			ifFalse: [Color transparent ] ];
-		 with: [ :presentation |
+		column: 'Announcement Type' evaluated: [ :aSubscription | 
+			self printAnnouncementTypeFor: aSubscription announcementClass];
+		column: 'Action' evaluated: [ :aSubscription | 
+			aSubscription action printString ];
+		textBackgroundColor: [ :aSubscription |
+			self highlightColorForSubscription: aSubscription ];
+		selectionAct: [:each |  each selection explore] on: $i entitled: 'Explore';
+		with: [ :presentation |
 			self installSubscriptionsActionsIn: presentation ]
 ]

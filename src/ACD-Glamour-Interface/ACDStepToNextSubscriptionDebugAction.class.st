@@ -5,18 +5,23 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+ACDStepToNextSubscriptionDebugAction class >> acdActionType [
+	<gtACDSubscriptionDebuggingAction>
+]
+
+{ #category : #testing }
 ACDStepToNextSubscriptionDebugAction >> appliesToContext: aContext [
 
 	^ self session hasMoreActiveSubscriptions
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDStepToNextSubscriptionDebugAction >> defaultReceiver [
 
 	^ self session
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'initialize-release' }
 ACDStepToNextSubscriptionDebugAction >> initialize [
 
 	self action: #stepToNextSubscription.
