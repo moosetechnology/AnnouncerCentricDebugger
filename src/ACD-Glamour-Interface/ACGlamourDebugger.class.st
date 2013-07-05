@@ -162,6 +162,17 @@ ACGlamourDebugger >> announcerIn: composite [
 
 ]
 
+{ #category : #'building presentations' }
+ACGlamourDebugger >> codePresentationIn: composite [
+
+	^ composite smalltalkCode
+		title: [ :aContext | GTInspector new printObjectAsAnItem: aContext receiver ];
+		doItReceiver: [ :aContext | aContext receiver ];
+		format: [ :aContext | aContext  sourceCode];
+		smalltalkClass: [ :aContext | aContext methodClass ];
+		act: [:each |  each entity receiver explore] on: $i entitled: 'Explore'
+]
+
 { #category : #accessing }
 ACGlamourDebugger >> currentContext [ 
 
@@ -221,15 +232,9 @@ ACGlamourDebugger >> process: aProcess controller: aController context: aContext
 { #category : #'building presentations' }
 ACGlamourDebugger >> receiverIn: composite [
 
-	composite smalltalkCode
-		title: [:receiverContext | GTInspector new printObjectAsAnItem: receiverContext receiver ];
-		doItReceiver: [:receiverContext | receiverContext receiver ];
-		format: [:receiverContext | receiverContext  sourceCode];
-		smalltalkClass: [ :receiverContext | receiverContext methodClass ];
-		act: [:each |  each entity receiver explore] on: $i entitled: 'Explore';
+	(self codePresentationIn: composite)
 		initialize: [ :code | code selectionInterval: (self session selectedCodeRangeForContext: self currentContext) ];
-		with: [ :presentation | self installReceiverActionsFor: presentation ]
-		"updateOn: Announcement from: self."
+		with: [ :code | self installReceiverActionsFor: code ]
 ]
 
 { #category : #actions }
@@ -249,12 +254,7 @@ ACGlamourDebugger >> selectedContext [
 { #category : #'building presentations' }
 ACGlamourDebugger >> senderIn: composite [
 
-	composite smalltalkCode
-		title: [:senderContext | GTInspector new printObjectAsAnItem: senderContext receiver ];
-		doItReceiver: [:senderContext | senderContext receiver ];
-		format: [:senderContext |  senderContext  sourceCode];
-		smalltalkClass: [ :senderContext | senderContext methodClass ];
-		act: [:each|  each entity receiver explore] on: $i entitled: 'Explore';
+	(self codePresentationIn: composite)
 		initialize: [ :code | code selectionInterval: (self session selectedCodeRangeForContext: self session senderContext) ];
 		with: [ :code | self installSenderActionsFor: code ]
 ]
@@ -267,8 +267,7 @@ ACGlamourDebugger >> stackIn: composite [
 		showOnly: 50;
 		display: #stack;
 		format: [ :each | String streamContents: [:stream | each printDebugOn: stream ] ];
-		selectionAct: [:each|  each selection explore] on: $i entitled: 'Explore';
-		with: [ :list | "self installStackActionsFor: list" ]
+		selectionAct: [:each|  each selection explore] on: $i entitled: 'Explore'
 
 ]
 
