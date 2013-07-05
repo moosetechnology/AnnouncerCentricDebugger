@@ -24,20 +24,12 @@ ACDAnnouncerBrowser >> addStepToNextSubscriptionActionFor: aPresentation to: aCo
 
 { #category : #building }
 ACDAnnouncerBrowser >> announcementIn: aComposite [ 
-			
-	"Not such a nice way to reuse code"
+
 	GTObjectVariablesBrowser new variablesIn: aComposite.
 	aComposite presentations last 
 		title: 'Announcement';
 		display: [ :aSession | aSession announcement gtInspectorRetrieveVariableValuePairs ];
-		selectionAct: [:each  :value|  each selection explore] on: $i entitled: 'Explore' 
-			
-	"aComposite dynamic 
-		title: 'Announcement';
-		display: [:aSession | 
-				GTObjectVariablesBrowser new browser 
-					noTitle; 
-					startOn: aSession announcement]."
+		selectionAct: [:each  :value|  each selection explore] on: $i entitled: 'Explore'
 ]
 
 { #category : #building }
@@ -50,12 +42,6 @@ ACDAnnouncerBrowser >> announcerIn: aComposite [
 		display: [ :aSession | aSession announcer gtInspectorRetrieveVariableValuePairs ];
 		selectionAct: [:each  :value|  each selection explore] on: $i entitled: 'Explore' 
 
-	"|announcerPresentation|
-	
-	announcerPresentation := aComposite dynamic 
-		title: 'Announcer';
-		display: [:aSession | 
-				GTObjectVariablesBrowser new browser noTitle; startOn: aSession announcer]."
 
 ]
 
@@ -174,8 +160,6 @@ ACDAnnouncerBrowser >> subscriptionsIn: aComposite [
 		display: [ :aSession | aSession allSubscriptions ];
 		column: 'Announcement Type' evaluated: [:subscription | 
 			self printAnnouncementTypeFor: subscription announcementClass];
-		"column: 'Receiver' evaluated: [:subscription | 
-			self printReceiverFor: subscription  ];"
 		column: 'Action' evaluated: [:subscription | 
 			subscription action printString ];
 		textBackgroundColor: [:subscription :aSession| aSession executingSubscription == subscription 

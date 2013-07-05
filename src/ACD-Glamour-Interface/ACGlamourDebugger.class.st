@@ -196,18 +196,7 @@ ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 			andShow: [ :composite | self senderIn: composite ].
 		browser transmit
 			to: #stack;
-			andShow: [ :composite | self stackIn: composite ].
-		
-		browser transmit
-			from: #sender port: #entity;
-			to: #sender port: #selectionInterval;
-			when: [:senderContext | senderContext notNil ];
-			transformed: [:senderContext | self session pcRangeForContext: senderContext].
-		browser transmit
-			from: #receiver port: #entity;
-			to: #receiver port: #selectionInterval;
-			when: [:receiverContext | receiverContext notNil ];
-			transformed: [:receiverContext | self session pcRangeForContext: receiverContext]
+			andShow: [ :composite | self stackIn: composite ]
 ]
 
 { #category : #'building actions' }
@@ -232,12 +221,13 @@ ACGlamourDebugger >> process: aProcess controller: aController context: aContext
 ACGlamourDebugger >> receiverIn: composite [
 
 	composite smalltalkCode
-		when: [:value | value notNil ];
+		when: [:value | value notNil ]; "Why is this here?"
 		title: [:receiverContext | GTInspector new printObjectAsAnItem: receiverContext receiver ];
 		doItReceiver: [:receiverContext | receiverContext receiver ];
 		format: [:receiverContext | receiverContext  sourceCode];
 		smalltalkClass: [ :receiverContext | receiverContext methodClass ];
 		act: [:each |  each entity receiver explore] on: $i entitled: 'Explore';
+		initialize: [ :code | code selectionInterval: (self session selectedCodeRangeForContext: self currentContext) ];
 		with: [ :presentation | self installReceiverActionsFor: presentation ]
 		"updateOn: Announcement from: self."
 ]
@@ -265,6 +255,7 @@ ACGlamourDebugger >> senderIn: composite [
 		format: [:senderContext |  senderContext  sourceCode];
 		smalltalkClass: [ :senderContext | senderContext methodClass ];
 		act: [:each|  each entity receiver explore] on: $i entitled: 'Explore';
+		initialize: [ :code | code selectionInterval: (self session selectedCodeRangeForContext: self session senderContext) ];
 		with: [ :code | self installSenderActionsFor: code ]
 ]
 
@@ -286,7 +277,7 @@ ACGlamourDebugger >> updateReceiverCodeSelection [
 
 	((self browser paneNamed: #receiver) 
 		port: #selectionInterval) 
-			value:  (self session pcRangeForContext:  self currentContext )
+			value:  (self session selectedCodeRangeForContext:  self currentContext)
 ]
 
 { #category : #updating }
@@ -294,5 +285,5 @@ ACGlamourDebugger >> updateSenderCodeSelection [
 
 	((self browser paneNamed: #sender) 
 		port: #selectionInterval) 
-			value:  (self session pcRangeForContext:  self session senderContext )
+			value:  (self session selectedCodeRangeForContext:  self session senderContext)
 ]
