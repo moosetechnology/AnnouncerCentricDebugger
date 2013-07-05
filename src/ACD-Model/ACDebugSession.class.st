@@ -52,36 +52,11 @@ ACDebugSession >> hasMoreActiveSubscriptions [
 ]
 
 { #category : #initialization }
-ACDebugSession >> initializeSenderContext: aSenderContext [ 
-	| ctx |
-	
-	self stepInto: aSenderContext.
-	self stepInto.
-	self initializeSenderContext: aSenderContext announcerContext: self context
-]
-
-{ #category : #initialization }
-ACDebugSession >> initializeSenderContext: aSenderContext announcerContext: anAnnouncerContext [ 
-	| registryContext |
-
-	senderContext := aSenderContext.
-	self stepThroughRegistryDeliveryContextFor: anAnnouncerContext. 
-	registryContext := self context.
-	announcerModel := ACDAnnouncerModel forAnnouncerContext: anAnnouncerContext registryContext: registryContext
-]
-
-{ #category : #initialization }
 ACDebugSession >> initializeSenderContext: aSenderContext announcerContext: anAnnouncerContext receiverContext: aReceiverContext [
 
 	senderContext := aSenderContext.
 	announcerModel := ACDAnnouncerModel forAnnouncerContext: anAnnouncerContext receiverContext: aReceiverContext.
 	receiverContext := aReceiverContext 
-]
-
-{ #category : #testing }
-ACDebugSession >> isSubscriptionExecuting [
-
-	^ announcerModel executingSubscription notNil 
 ]
 
 { #category : #accessing }
@@ -112,18 +87,6 @@ ACDebugSession >> senderContext [
 ACDebugSession >> stackFilterFor: aContext [ 
 
 	^ self class stackFilterFor: aContext 
-]
-
-{ #category : #'as yet unclassified' }
-ACDebugSession >> stepIntoWhileFalse: aBlock [
-
-	aBlock whileFalse: [ self stepInto ]
-]
-
-{ #category : #'as yet unclassified' }
-ACDebugSession >> stepIntoWhileTrue: aBlock [
-
-	aBlock whileTrue: [ self stepInto ]
 ]
 
 { #category : #initialization }

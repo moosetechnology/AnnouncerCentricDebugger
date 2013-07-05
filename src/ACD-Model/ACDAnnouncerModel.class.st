@@ -29,12 +29,6 @@ ACDAnnouncerModel class >> forAnnouncerContext: announcerContext receiverContext
 	^ self new forAnnouncerContext: announcerContext receiverContext: receiverContext
 ]
 
-{ #category : #'instance creation' }
-ACDAnnouncerModel class >> forAnnouncerContext: anAnnouncerContext registryContext: aRegistryContext [ 
-	
-	^ self new forAnnouncerContext: anAnnouncerContext  registryContext: aRegistryContext
-]
-
 { #category : #'as yet unclassified' }
 ACDAnnouncerModel >> allSubscriptions [
 
@@ -95,25 +89,6 @@ ACDAnnouncerModel >> forAnnouncerContext: announcerContext receiverContext: aRec
 		
 		receiverContext := aReceiverContext ]
 	
-	
-	
-	
-	
-	
-]
-
-{ #category : #initialization }
-ACDAnnouncerModel >> forAnnouncerContext: anAnnouncerContext registryContext: aRegistryContext [
-	"announcerContext = Context representing the method announce: of an announcer."
-	"registryContext = The first context representing method SubscriptionRegistry>>deliver:to: created as a result of calling announce: on an announcer."
-	
-	self reset.
-	
-	context := anAnnouncerContext.
-
-	announcement := aRegistryContext tempAt: 1.
-	"allSubscriptions := aRegistryContext tempAt: 2."
-		
 	
 	
 	
