@@ -185,6 +185,7 @@ ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 
 	browser transmit
 			to: #receiver;
+			when: [ :session | session notNil ];
 			transformed: [:session | session context];
 			andShow: [ :composite | self receiverIn: composite ].	
 		browser transmit
@@ -221,7 +222,6 @@ ACGlamourDebugger >> process: aProcess controller: aController context: aContext
 ACGlamourDebugger >> receiverIn: composite [
 
 	composite smalltalkCode
-		when: [:value | value notNil ]; "Why is this here?"
 		title: [:receiverContext | GTInspector new printObjectAsAnItem: receiverContext receiver ];
 		doItReceiver: [:receiverContext | receiverContext receiver ];
 		format: [:receiverContext | receiverContext  sourceCode];
