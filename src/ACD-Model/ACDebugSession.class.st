@@ -39,7 +39,7 @@ ACDebugSession >> announcerContext [
 	^ announcerModel context
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #predicates }
 ACDebugSession >> deliveryCompletionPredicateForSubscription: aSubscription. [
 	
 	^ ContextPredicate new 
@@ -49,7 +49,7 @@ ACDebugSession >> deliveryCompletionPredicateForSubscription: aSubscription. [
 					aContext method selector = aSubscription action selector] ].
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #predicates }
 ACDebugSession >> deliveryInitializationPredicate [ 
 
 	^ ContextPredicate new 
@@ -110,15 +110,7 @@ ACDebugSession >> stackFilterFor: aContext [
 	^ self class stackFilterFor: aContext 
 ]
 
-{ #category : #initialization }
-ACDebugSession >> stepThroughRegistryDeliveryContextFor: anAnnouncerContext [
-
-	self stepInto: anAnnouncerContext.
-	[self context receiver class == SubscriptionRegistry 
-		and: [self context method selector = #deliver:to: ]] whileFalse: [self stepInto].
-]
-
-{ #category : #'as yet unclassified' }
+{ #category : #'debugging actions' }
 ACDebugSession >> stepToNextSubscription [
 	| deliveryInitializationPredicate deliveryCompletionPredicate |
 	
@@ -135,16 +127,10 @@ ACDebugSession >> stepToNextSubscription [
 		self updateFromReceiverContext: self context ].
 ]
 
-{ #category : #initialization }
+{ #category : #updating }
 ACDebugSession >> updateFromReceiverContext: aContext [
 	|announcerContext|
 
 	announcerContext := (self stackFilterFor: aContext sender) locateAnnouncerEntryPoint.
 	self initializeSenderContext: announcerContext sender announcerContext: announcerContext receiverContext: aContext
-]
-
-{ #category : #initialization }
-ACDebugSession >> updateFromSenderContext: aContext [
-
-	self initializeSenderContext: aContext announcerContext: announcerModel context receiverContext: receiverContext
 ]
