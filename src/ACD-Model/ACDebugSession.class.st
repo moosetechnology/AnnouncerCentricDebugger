@@ -39,6 +39,27 @@ ACDebugSession >> announcerContext [
 	^ announcerModel context
 ]
 
+{ #category : #'as yet unclassified' }
+ACDebugSession >> deliveryCompletionPredicateForSubscription: aSubscription. [
+	
+	^ ContextPredicate new 
+			baseContext: self announcerContext;
+			action: [ :aContext |  
+				aContext receiver == aSubscription subscriber and: [
+					aContext method selector = aSubscription action selector] ].
+]
+
+{ #category : #'as yet unclassified' }
+ACDebugSession >> deliveryInitializationPredicate [ 
+
+	^ ContextPredicate new 
+			baseContext: self announcerContext;
+			action: [ :aContext | 
+				aContext receiver isSubscription and: [  
+					aContext selector =  #deliver: and: [ 
+						aContext closure notNil ] ] ]
+]
+
 { #category : #accessing }
 ACDebugSession >> executingSubscription [
 
@@ -99,29 +120,19 @@ ACDebugSession >> stepThroughRegistryDeliveryContextFor: anAnnouncerContext [
 
 { #category : #'as yet unclassified' }
 ACDebugSession >> stepToNextSubscription [
-	| subscription|
+	| deliveryInitializationPredicate deliveryCompletionPredicate |
 	
 	"Step over the delivery of the current announcement."
 	self stepOver: announcerModel announcementDeliveryLoopContext.
 	
-	"If there was a halt, do not perform any more actions."
-	(self context selector = #halt) ifTrue: [ "Update the debugger" ^ self ].
+	deliveryInitializationPredicate := self deliveryInitializationPredicate.
+	self stepUntil: deliveryInitializationPredicate.
 	
-	"Locate the context in which the subscriptin delivers it's announcer"
-	self stepIntoWhileTrue: [ (self context selector ~=  #deliver: or: [self context closure isNil]) and: [ 
-		self context selector ~= #deliver:to: ] ]. 
-
-	"If there are no more subscriptions do nothing. Normally this should not happen."
-	(self context selector = #deliver:to:) ifTrue: [ ^ self ].
-
-	"For now only message sends are handled"
-	"Go through the stack until the message send is executed."
-	subscription := self context receiver.
-	self stepIntoWhileFalse: [self context receiver == subscription subscriber and: [
-		self context method selector = subscription action selector]].
-
+	deliveryInitializationPredicate hasMatched ifTrue: [ 
+		deliveryCompletionPredicate := self deliveryCompletionPredicateForSubscription: self context receiver .
+		self stepUntil: deliveryCompletionPredicate ].
+	
 	self updateFromReceiverContext: self context
-	
 ]
 
 { #category : #initialization }
