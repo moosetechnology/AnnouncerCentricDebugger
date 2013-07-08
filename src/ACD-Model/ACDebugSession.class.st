@@ -126,13 +126,13 @@ ACDebugSession >> stepToNextSubscription [
 	self stepOver: announcerModel announcementDeliveryLoopContext.
 	
 	deliveryInitializationPredicate := self deliveryInitializationPredicate.
-	self stepUntil: deliveryInitializationPredicate.
+	self stepUntil: deliveryInitializationPredicate from: self context.
 	
 	deliveryInitializationPredicate hasMatched ifTrue: [ 
-		deliveryCompletionPredicate := self deliveryCompletionPredicateForSubscription: self context receiver .
-		self stepUntil: deliveryCompletionPredicate ].
-	
-	self updateFromReceiverContext: self context
+		deliveryCompletionPredicate := self deliveryCompletionPredicateForSubscription: self context receiver.
+		self stepUntil: deliveryCompletionPredicate.
+		
+		self updateFromReceiverContext: self context ].
 ]
 
 { #category : #initialization }
