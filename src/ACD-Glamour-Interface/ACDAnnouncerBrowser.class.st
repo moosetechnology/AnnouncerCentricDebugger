@@ -111,7 +111,7 @@ ACDAnnouncerBrowser >> subscriptionsIn: aComposite [
 	aComposite table
 		title: 'Subscriptions';
 		showOnly: 100;
-		display: [ :aSession | aSession allSubscriptions ];
+		display: [ :aSession | aSession activeSubscriptions ];
 		column: 'Announcement Type' evaluated: [ :aSubscription | 
 			self printAnnouncementTypeFor: aSubscription announcementClass];
 		column: 'Action' evaluated: [ :aSubscription | 
