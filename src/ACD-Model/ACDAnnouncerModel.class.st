@@ -13,7 +13,7 @@ Class {
 	#name : #ACDAnnouncerModel,
 	#superclass : #Object,
 	#instVars : [
-		'context',
+		'announcerContext',
 		'receiverContext',
 		'announcement',
 		'executingSubscriptionIndex',
@@ -29,7 +29,16 @@ ACDAnnouncerModel class >> forAnnouncerContext: announcerContext receiverContext
 	^ self new forAnnouncerContext: announcerContext receiverContext: receiverContext
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
+ACDAnnouncerModel >> activeSubscriptions [
+
+	^ OrderedCollection new  
+		addAll: activeSubscriptions;
+		yourself
+	
+]
+
+{ #category : #accessing }
 ACDAnnouncerModel >> allSubscriptions [
 
 	^ OrderedCollection new  
@@ -45,7 +54,7 @@ ACDAnnouncerModel >> announcement [
 	^ announcement 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDAnnouncerModel >> announcementDeliveryLoopContext [
 	
 	^ (self stackFilterFor: receiverContext sender) locateAnnouncementDeliveryLoopContext
@@ -60,7 +69,7 @@ ACDAnnouncerModel >> announcer [
 { #category : #accessing }
 ACDAnnouncerModel >> context [
 
-	^ context 
+	^ announcerContext 
 ]
 
 { #category : #accessing }
@@ -70,24 +79,22 @@ ACDAnnouncerModel >> executingSubscription [
 ]
 
 { #category : #initialization }
-ACDAnnouncerModel >> forAnnouncerContext: announcerContext receiverContext: aReceiverContext [
+ACDAnnouncerModel >> forAnnouncerContext: anAnnouncerContext receiverContext: aReceiverContext [
 	"aContext = A context represeting the delivery of a message send as direct result of an announcement"
 	|stackFilter|
 	
 	self reset.
 	
-	context := announcerContext.
-	"TODO: set announcement when  receiverContext is nil"
-	aReceiverContext notNil ifTrue: [
-		stackFilter := self stackFilterFor: aReceiverContext sender.
-		(stackFilter locateAnnouncementDelivery) isNil ifTrue: [ 
-			^ self ]. "aContext was not created as direct result of an announcemnt."
+	announcerContext := anAnnouncerContext.
+
+	stackFilter := self stackFilterFor: aReceiverContext sender.
+	(stackFilter locateAnnouncementDelivery) isNil ifTrue: [ ^ self ]. "aContext was not created as direct result of an announcemnt."
 		
-		announcement := stackFilter extractAnnouncement.
-		executingSubscriptionIndex := stackFilter extractExecutingSubscriptionIndex. 
-		activeSubscriptions := Array withAll: stackFilter extractActiveSubscriptions.
+	announcement := stackFilter extractAnnouncement.
+	executingSubscriptionIndex := stackFilter extractExecutingSubscriptionIndex. 
+	activeSubscriptions := Array withAll: stackFilter extractActiveSubscriptions.
 		
-		receiverContext := aReceiverContext ]
+	receiverContext := aReceiverContext 
 	
 	
 	
@@ -105,7 +112,7 @@ ACDAnnouncerModel >> hasMoreActiveSubscriptions [
 { #category : #initialization }
 ACDAnnouncerModel >> reset [
 
-	context := nil.
+	announcerContext := nil.
 	receiverContext := nil.
 	announcement := nil.
 	self resetSubscriptions.

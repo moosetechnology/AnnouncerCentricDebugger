@@ -16,6 +16,12 @@ ACDebugSession class >> stackFilterFor: aContext [
 ]
 
 { #category : #accessing }
+ACDebugSession >> activeSubscriptions [
+
+	^ announcerModel activeSubscriptions
+]
+
+{ #category : #accessing }
 ACDebugSession >> allSubscriptions [
 
 	^ announcerModel allSubscriptions
