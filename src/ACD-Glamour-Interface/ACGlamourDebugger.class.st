@@ -65,14 +65,13 @@ ACGlamourDebugger class >> spanSessionForContext: aContext fromProcess: anInterr
 { #category : #'building presentations' }
 ACGlamourDebugger >> announcerIn: composite [
 
-	composite dynamic
-		display: [ :each | 
-			GTInspector new first
+	composite custom:
+			(GTInspector new first
 				fixedSizePanes: 1; "Only one"
 				noTitle;
 				noActions;
-				showFirst: [ :a | a custom: (ACDAnnouncerBrowser new debugger: self; startOn: each) ];
-				startOn: each ]
+				showFirst: [ :a | a custom: (ACDAnnouncerBrowser new debugger: self) ];
+				yourself)
 
 ]
 
