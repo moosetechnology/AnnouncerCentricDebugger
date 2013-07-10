@@ -1,5 +1,5 @@
 Class {
-	#name : #ACDebugSession,
+	#name : #ACDDebugSession,
 	#superclass : #DebugSession,
 	#instVars : [
 		'senderContext',
@@ -10,43 +10,43 @@ Class {
 }
 
 { #category : #accessing }
-ACDebugSession class >> stackFilterFor: aContext [ 
+ACDDebugSession class >> stackFilterFor: aContext [ 
 
 	^ ACDStackFilter forContext: aContext 
 ]
 
 { #category : #accessing }
-ACDebugSession >> activeSubscriptions [
+ACDDebugSession >> activeSubscriptions [
 
 	^ announcerModel activeSubscriptions
 ]
 
 { #category : #accessing }
-ACDebugSession >> allSubscriptions [
+ACDDebugSession >> allSubscriptions [
 
 	^ announcerModel allSubscriptions
 ]
 
 { #category : #accessing }
-ACDebugSession >> announcement [
+ACDDebugSession >> announcement [
 
 	^ announcerModel announcement 
 ]
 
 { #category : #accessing }
-ACDebugSession >> announcer [
+ACDDebugSession >> announcer [
 
 	^ announcerModel announcer
 ]
 
 { #category : #accessing }
-ACDebugSession >> announcerContext [
+ACDDebugSession >> announcerContext [
 
 	^ announcerModel context
 ]
 
 { #category : #predicates }
-ACDebugSession >> deliveryCompletionPredicateForSubscription: aSubscription. [
+ACDDebugSession >> deliveryCompletionPredicateForSubscription: aSubscription. [
 	
 	^ ContextPredicate new 
 			baseContext: self announcerContext;
@@ -56,7 +56,7 @@ ACDebugSession >> deliveryCompletionPredicateForSubscription: aSubscription. [
 ]
 
 { #category : #predicates }
-ACDebugSession >> deliveryInitializationPredicate [ 
+ACDDebugSession >> deliveryInitializationPredicate [ 
 
 	^ ContextPredicate new 
 			baseContext: self announcerContext;
@@ -67,19 +67,19 @@ ACDebugSession >> deliveryInitializationPredicate [
 ]
 
 { #category : #accessing }
-ACDebugSession >> executingSubscription [
+ACDDebugSession >> executingSubscription [
 
 	^ announcerModel executingSubscription 
 ]
 
 { #category : #testing }
-ACDebugSession >> hasMoreActiveSubscriptions [
+ACDDebugSession >> hasMoreActiveSubscriptions [
 
 	^ announcerModel hasMoreActiveSubscriptions
 ]
 
 { #category : #initialization }
-ACDebugSession >> initializeSenderContext: aSenderContext announcerContext: anAnnouncerContext receiverContext: aReceiverContext [
+ACDDebugSession >> initializeSenderContext: aSenderContext announcerContext: anAnnouncerContext receiverContext: aReceiverContext [
 
 	senderContext := aSenderContext.
 	announcerModel := ACDAnnouncerModel forAnnouncerContext: anAnnouncerContext receiverContext: aReceiverContext.
@@ -87,37 +87,37 @@ ACDebugSession >> initializeSenderContext: aSenderContext announcerContext: anAn
 ]
 
 { #category : #accessing }
-ACDebugSession >> receiver [
+ACDDebugSession >> receiver [
 
 	^ receiverContext receiver 
 ]
 
 { #category : #accessing }
-ACDebugSession >> receiverContext [
+ACDDebugSession >> receiverContext [
 
 	^ receiverContext
 ]
 
 { #category : #accessing }
-ACDebugSession >> sender [
+ACDDebugSession >> sender [
 
 	^ senderContext receiver
 ]
 
 { #category : #accessing }
-ACDebugSession >> senderContext [
+ACDDebugSession >> senderContext [
 
 	^ senderContext
 ]
 
 { #category : #private }
-ACDebugSession >> stackFilterFor: aContext [ 
+ACDDebugSession >> stackFilterFor: aContext [ 
 
 	^ self class stackFilterFor: aContext 
 ]
 
 { #category : #'debugging actions' }
-ACDebugSession >> stepToNextSubscription [
+ACDDebugSession >> stepToNextSubscription [
 	| deliveryInitializationPredicate deliveryCompletionPredicate |
 
 	"Step over the delivery of the current announcement."
@@ -134,7 +134,7 @@ ACDebugSession >> stepToNextSubscription [
 ]
 
 { #category : #updating }
-ACDebugSession >> updateFromReceiverContext: aContext [
+ACDDebugSession >> updateFromReceiverContext: aContext [
 	|announcerContext|
 
 	announcerContext := (self stackFilterFor: aContext sender) locateAnnouncerEntryPoint.

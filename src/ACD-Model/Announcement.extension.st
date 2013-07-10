@@ -1,12 +1,12 @@
 Extension { #name : #Announcement }
 
-{ #category : #'*acd-model' }
+{ #category : #'*ACD-Model' }
 Announcement >> announcementType [
 
 	^ self class announcementType
 ]
 
-{ #category : #'*acd-model' }
+{ #category : #'*ACD-Model' }
 Announcement class >> announcementType [
 
 	^ self

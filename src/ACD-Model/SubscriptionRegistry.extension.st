@@ -1,6 +1,6 @@
 Extension { #name : #SubscriptionRegistry }
 
-{ #category : #'*acd-model' }
+{ #category : #'*ACD-Model' }
 SubscriptionRegistry >> acdSubscriptions [
 	|subsCopy|
 	

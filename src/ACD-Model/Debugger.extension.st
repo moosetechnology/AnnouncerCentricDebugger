@@ -1,6 +1,6 @@
 Extension { #name : #Debugger }
 
-{ #category : #'*acd-model' }
+{ #category : #'*ACD-Model' }
 Debugger >> untilClientInvokesAnnouncer [
 	self selectedContext receiver haltWhenClientInvokesAnnouncer .
 	self proceed.
