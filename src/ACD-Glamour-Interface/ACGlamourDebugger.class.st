@@ -40,7 +40,7 @@ ACGlamourDebugger class >> initialize [
 { #category : #private }
 ACGlamourDebugger class >> sessionClass [
 
-	^ ACDebugSession 
+	^ ACDDebugSession 
 ]
 
 { #category : #accessing }
