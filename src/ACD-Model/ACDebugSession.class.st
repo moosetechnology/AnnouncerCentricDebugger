@@ -119,7 +119,7 @@ ACDebugSession >> stackFilterFor: aContext [
 { #category : #'debugging actions' }
 ACDebugSession >> stepToNextSubscription [
 	| deliveryInitializationPredicate deliveryCompletionPredicate |
-	
+
 	"Step over the delivery of the current announcement."
 	self stepOver: announcerModel announcementDeliveryLoopContext.
 	

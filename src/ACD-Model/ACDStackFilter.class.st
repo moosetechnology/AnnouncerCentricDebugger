@@ -99,6 +99,15 @@ ACDStackFilter >> filterInternalAnnouncerContexts [
 		whileTrue: [ context := context sender ]
 ]
 
+{ #category : #actions }
+ACDStackFilter >> findContextSuchThat: testBlock [
+
+	^ context 
+		ifNil: [ nil ] 
+		ifNotNil: [ context := context findContextSuchThat: testBlock ]
+	
+]
+
 { #category : #initialization }
 ACDStackFilter >> forContext: aContext [
 
@@ -127,9 +136,9 @@ ACDStackFilter >> locateAnnouncementDeliveryLoopContext [
 { #category : #actions }
 ACDStackFilter >> locateAnnouncerEntryPoint [
 
-	^ self filterBifrostAdaptations;
-		filterDeliveryToReceiver;
-		filterInternalAnnouncerContexts;
+	^ self 
+		skipAllInternalAnnouncerContexts;
+		skipAnnounceContexts;
 		result
 ]
 
@@ -143,4 +152,20 @@ ACDStackFilter >> result [
 ACDStackFilter >> sender [
 
 	^ context isNil ifFalse: [ context := context sender ]
+]
+
+{ #category : #actions }
+ACDStackFilter >> skipAllInternalAnnouncerContexts [
+	"Filter all contexts until the one that triggered the announcer is found."
+	
+	self findContextSuchThat: [ :ctxt | 
+		(ctxt methodSelector = #announce:) and: [ 
+			ctxt methodClass = Announcer ] ]
+]
+
+{ #category : #actions }
+ACDStackFilter >> skipAnnounceContexts [
+	
+	self findContextSuchThat: [ :ctxt | 
+		(ctxt methodSelector ~= #announce:) ]
 ]
