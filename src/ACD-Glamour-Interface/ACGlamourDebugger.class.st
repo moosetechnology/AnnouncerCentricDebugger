@@ -86,10 +86,10 @@ ACGlamourDebugger >> codePresentationIn: composite [
 		act: [:each |  each entity receiver explore] on: $i entitled: 'Explore'
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing context' }
 ACGlamourDebugger >> currentContext [ 
 
-	^ self session context
+	^ self interruptedContext
 ]
 
 { #category : #building }
@@ -150,6 +150,12 @@ ACGlamourDebugger >> receiverIn: composite [
 		with: [ :code | self installReceiverActionsFor: code ]
 ]
 
+{ #category : #accessing }
+ACGlamourDebugger >> receiverSelectionInterval [
+
+	^ self selectionIntervalForPane: #receiver
+]
+
 { #category : #actions }
 ACGlamourDebugger >> resume [
 
@@ -158,10 +164,10 @@ ACGlamourDebugger >> resume [
 	self browser close
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing context' }
 ACGlamourDebugger >> selectedContext [
 
-	^ self session context
+	^ self interruptedContext
 ]
 
 { #category : #'building presentations' }
