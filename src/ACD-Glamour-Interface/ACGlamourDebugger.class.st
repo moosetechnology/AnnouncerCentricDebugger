@@ -23,10 +23,7 @@ ACGlamourDebugger class >> defaultTitle [
 { #category : #testing }
 ACGlamourDebugger class >> handlesContext: aContext [
 
-	"TODO: aContext sender sender
-	aContext represents the context of the exception.
-	we need the sender -> must improve"
-	 ^ (self sessionClass stackFilterFor: aContext sender) locateAnnouncerEntryPoint notNil 
+	 ^ (self sessionClass stackFilterFor: aContext) locateAnnouncerEntryPoint notNil 
 ]
 
 { #category : #'class initialization' }
