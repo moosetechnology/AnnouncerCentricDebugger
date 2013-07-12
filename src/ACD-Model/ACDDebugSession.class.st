@@ -48,7 +48,7 @@ ACDDebugSession >> announcerContext [
 { #category : #predicates }
 ACDDebugSession >> deliveryCompletionPredicateForSubscription: aSubscription. [
 	
-	^ ContextPredicate new 
+	^ StepContextPredicate new 
 			baseContext: self announcerContext;
 			predicate: [ :aContext |  
 				aContext receiver == aSubscription subscriber and: [
@@ -58,7 +58,7 @@ ACDDebugSession >> deliveryCompletionPredicateForSubscription: aSubscription. [
 { #category : #predicates }
 ACDDebugSession >> deliveryInitializationPredicate [ 
 
-	^ ContextPredicate new 
+	^ StepContextPredicate new 
 			baseContext: self announcerContext;
 			predicate: [ :aContext | 
 				aContext receiver isSubscription and: [  
