@@ -47,7 +47,7 @@ ACGlamourDebugger class >> sessionClass [
 ACGlamourDebugger class >> spanCompleteSessionForContext: aContext fromProcess: anInterruptedProcess [
 	|session announcerContext|
 	
-	announcerContext := (ACDStackFilter forContext: aContext sender) locateAnnouncerEntryPoint.
+	announcerContext := (ACDContextLocator forContext: aContext sender) locateAnnouncerEntryPoint.
 	session := (self spanSessionForContext: aContext fromProcess: anInterruptedProcess).		
 	session 
 		initializeSenderContext: announcerContext sender 
