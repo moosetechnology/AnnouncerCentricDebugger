@@ -22,23 +22,20 @@ ACDStackFilter >> extractActiveSubscriptions [
 { #category : #'accessing actions' }
 ACDStackFilter >> extractAnnouncement [
 
-	^ context ifNotNilDo: [:aContext| aContext  tempAt: 1]
+	^ context ifNotNilDo: [:aContext| aContext tempAt: 1]
 ]
 
 { #category : #'accessing actions' }
 ACDStackFilter >> extractExecutingSubscription [
 	
-
 	^ context ifNotNilDo: [:aContext|
 		(aContext tempAt: 2) at: (aContext tempAt: 4)  ]
 ]
 
 { #category : #'accessing actions' }
 ACDStackFilter >> extractExecutingSubscriptionIndex [
-	
 
-	^ context ifNotNilDo: [:aContext|
-		aContext tempAt: 4 ]
+	^ context ifNotNilDo: [:aContext| aContext tempAt: 4 ]
 ]
 
 { #category : #private }
@@ -69,12 +66,15 @@ ACDStackFilter >> locateAnnouncementDelivery [
 	should be extracted."
 	
 	^ self 
-		skipUntilSubscriptionDeliveryContexts;
+		skipUntilSubscriptionDeliveryContext;
 		result
 ]
 
 { #category : #actions }
 ACDStackFilter >> locateAnnouncerEntryPoint [
+	"Locate the initial context that triggered the delivery of
+	a subscription. The initial context is the first that send 
+	the message announce:"
 
 	^ self 
 		skipAllInternalAnnouncerContexts;
@@ -111,7 +111,7 @@ ACDStackFilter >> skipAnnounceContexts [
 ]
 
 { #category : #'filtering actions' }
-ACDStackFilter >> skipUntilSubscriptionDeliveryContexts [
+ACDStackFilter >> skipUntilSubscriptionDeliveryContext [
 
 	self findContextSuchThat: [ :aContext | 
 		aContext receiver class = SubscriptionRegistry and: [  
