@@ -97,7 +97,7 @@ ACDStackFilter >> filterInternalAnnouncerContexts [
 		whileTrue: [ context := context sender ]
 ]
 
-{ #category : #actions }
+{ #category : #private }
 ACDStackFilter >> findContextSuchThat: testBlock [
 
 	^ context 
@@ -144,7 +144,7 @@ ACDStackFilter >> sender [
 	^ context isNil ifFalse: [ context := context sender ]
 ]
 
-{ #category : #actions }
+{ #category : #'filtering actions' }
 ACDStackFilter >> skipAllInternalAnnouncerContexts [
 	"Filter all contexts until the one that triggered the announcer is found."
 	
@@ -153,14 +153,14 @@ ACDStackFilter >> skipAllInternalAnnouncerContexts [
 			ctxt methodClass = Announcer ] ]
 ]
 
-{ #category : #actions }
+{ #category : #'filtering actions' }
 ACDStackFilter >> skipAnnounceContexts [
 	
 	self findContextSuchThat: [ :ctxt | 
 		(ctxt methodSelector ~= #announce:) ]
 ]
 
-{ #category : #actions }
+{ #category : #'filtering actions' }
 ACDStackFilter >> skipUntilSubscriptionDeliveryContexts [
 
 	self findContextSuchThat: [ :aContext | 
