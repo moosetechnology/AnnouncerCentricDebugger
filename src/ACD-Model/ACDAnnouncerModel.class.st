@@ -57,7 +57,7 @@ ACDAnnouncerModel >> announcement [
 { #category : #accessing }
 ACDAnnouncerModel >> announcementDeliveryLoopContext [
 	
-	^ (self stackFilterFor: receiverContext sender) locateAnnouncementDeliveryLoopContext
+	^ (self stackFilterFor: receiverContext) locateAnnouncementDelivery
 ]
 
 { #category : #accessing }
@@ -87,7 +87,7 @@ ACDAnnouncerModel >> forAnnouncerContext: anAnnouncerContext receiverContext: aR
 	
 	announcerContext := anAnnouncerContext.
 
-	stackFilter := self stackFilterFor: aReceiverContext sender.
+	stackFilter := self stackFilterFor: aReceiverContext.
 	(stackFilter locateAnnouncementDelivery) isNil ifTrue: [ ^ self ]. "aContext was not created as direct result of an announcemnt."
 		
 	announcement := stackFilter extractAnnouncement.

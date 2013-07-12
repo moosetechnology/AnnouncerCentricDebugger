@@ -16,31 +16,29 @@ ACDStackFilter class >> forContext: aContext [
 { #category : #'accessing actions' }
 ACDStackFilter >> extractActiveSubscriptions [
 
-	^ context ifNotNilDo: [:aContext| aContext sender sender sender tempAt: 2]
+	^ context ifNotNilDo: [:aContext| aContext tempAt: 2]
 ]
 
 { #category : #'accessing actions' }
 ACDStackFilter >> extractAnnouncement [
 
-	^ context ifNotNilDo: [:aContext| aContext sender sender sender tempAt: 1]
+	^ context ifNotNilDo: [:aContext| aContext  tempAt: 1]
 ]
 
 { #category : #'accessing actions' }
 ACDStackFilter >> extractExecutingSubscription [
 	
 
-	^ context ifNotNilDo: [:aContext||deliveryContext|
-		deliveryContext := aContext sender sender sender.
-		(deliveryContext tempAt: 2) at:  (deliveryContext tempAt: 4)  ]
+	^ context ifNotNilDo: [:aContext|
+		(aContext tempAt: 2) at: (aContext tempAt: 4)  ]
 ]
 
 { #category : #'accessing actions' }
 ACDStackFilter >> extractExecutingSubscriptionIndex [
 	
 
-	^ context ifNotNilDo: [:aContext||deliveryContext|
-		deliveryContext := aContext sender sender sender.
-		deliveryContext tempAt: 4 ]
+	^ context ifNotNilDo: [:aContext|
+		aContext tempAt: 4 ]
 ]
 
 { #category : #'filtering actions' }
@@ -116,20 +114,12 @@ ACDStackFilter >> forContext: aContext [
 
 { #category : #actions }
 ACDStackFilter >> locateAnnouncementDelivery [
+	"Locate the context responsible with initiating the delivery of a subscription.
+	From this context the active subscriptions and the current executing subscription,
+	should be extracted."
 	
-	^ self filterBifrostAdaptations;
-		filterDeliveryToReceiver;
-		result
-]
-
-{ #category : #actions }
-ACDStackFilter >> locateAnnouncementDeliveryLoopContext [
-
 	^ self 
-		locateAnnouncementDelivery;
-		sender;
-		sender;
-		sender;
+		skipUntilSubscriptionDeliveryContexts;
 		result
 ]
 
@@ -168,4 +158,13 @@ ACDStackFilter >> skipAnnounceContexts [
 	
 	self findContextSuchThat: [ :ctxt | 
 		(ctxt methodSelector ~= #announce:) ]
+]
+
+{ #category : #actions }
+ACDStackFilter >> skipUntilSubscriptionDeliveryContexts [
+
+	self findContextSuchThat: [ :aContext | 
+		aContext receiver class = SubscriptionRegistry and: [  
+			aContext selector =  #deliver:to:startingAt: and: [ 
+				aContext closure isNil ] ] ]
 ]
