@@ -50,7 +50,7 @@ ACDDebugSession >> deliveryCompletionPredicateForSubscription: aSubscription. [
 	
 	^ ContextPredicate new 
 			baseContext: self announcerContext;
-			action: [ :aContext |  
+			predicate: [ :aContext |  
 				aContext receiver == aSubscription subscriber and: [
 					aContext method selector = aSubscription action selector] ].
 ]
@@ -60,7 +60,7 @@ ACDDebugSession >> deliveryInitializationPredicate [
 
 	^ ContextPredicate new 
 			baseContext: self announcerContext;
-			action: [ :aContext | 
+			predicate: [ :aContext | 
 				aContext receiver isSubscription and: [  
 					aContext selector =  #deliver: and: [ 
 						aContext closure notNil ] ] ]

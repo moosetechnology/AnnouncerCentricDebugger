@@ -80,7 +80,6 @@ ACDAnnouncerModel >> executingSubscription [
 
 { #category : #initialization }
 ACDAnnouncerModel >> forAnnouncerContext: anAnnouncerContext receiverContext: aReceiverContext [
-	"aContext = A context represeting the delivery of a message send as direct result of an announcement"
 	|stackFilter|
 	
 	self reset.
