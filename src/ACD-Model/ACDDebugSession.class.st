@@ -12,7 +12,7 @@ Class {
 { #category : #accessing }
 ACDDebugSession class >> stackFilterFor: aContext [ 
 
-	^ ACDStackFilter forContext: aContext 
+	^ ACDContextLocator forContext: aContext 
 ]
 
 { #category : #accessing }

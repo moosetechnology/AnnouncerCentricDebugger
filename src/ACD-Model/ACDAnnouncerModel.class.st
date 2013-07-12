@@ -132,5 +132,5 @@ ACDAnnouncerModel >> resetSubscriptions [
 { #category : #private }
 ACDAnnouncerModel >> stackFilterFor: aContext [ 
 
-	^ ACDStackFilter forContext: aContext 
+	^ ACDContextLocator forContext: aContext 
 ]

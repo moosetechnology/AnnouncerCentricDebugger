@@ -1,5 +1,5 @@
 Class {
-	#name : #ACDStackFilter,
+	#name : #ACDContextLocator,
 	#superclass : #Object,
 	#instVars : [
 		'context'
@@ -8,44 +8,44 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-ACDStackFilter class >> forContext: aContext [
+ACDContextLocator class >> forContext: aContext [
 
 	^ self new forContext: aContext
 ]
 
 { #category : #'accessing actions' }
-ACDStackFilter >> extractActiveSubscriptions [
+ACDContextLocator >> extractActiveSubscriptions [
 
 	^ context ifNotNilDo: [:aContext| aContext tempAt: 2]
 ]
 
 { #category : #'accessing actions' }
-ACDStackFilter >> extractAnnouncement [
+ACDContextLocator >> extractAnnouncement [
 
 	^ context ifNotNilDo: [:aContext| aContext tempAt: 1]
 ]
 
 { #category : #'accessing actions' }
-ACDStackFilter >> extractExecutingSubscription [
+ACDContextLocator >> extractExecutingSubscription [
 	
 	^ context ifNotNilDo: [:aContext|
 		(aContext tempAt: 2) at: (aContext tempAt: 4)  ]
 ]
 
 { #category : #'accessing actions' }
-ACDStackFilter >> extractExecutingSubscriptionIndex [
+ACDContextLocator >> extractExecutingSubscriptionIndex [
 
 	^ context ifNotNilDo: [:aContext| aContext tempAt: 4 ]
 ]
 
 { #category : #private }
-ACDStackFilter >> filterFailed [
+ACDContextLocator >> filterFailed [
 
 	context := nil
 ]
 
 { #category : #private }
-ACDStackFilter >> findContextSuchThat: testBlock [
+ACDContextLocator >> findContextSuchThat: testBlock [
 
 	^ context 
 		ifNil: [ nil ] 
@@ -54,13 +54,13 @@ ACDStackFilter >> findContextSuchThat: testBlock [
 ]
 
 { #category : #initialization }
-ACDStackFilter >> forContext: aContext [
+ACDContextLocator >> forContext: aContext [
 
 	context := aContext 
 ]
 
 { #category : #actions }
-ACDStackFilter >> locateAnnouncementDelivery [
+ACDContextLocator >> locateAnnouncementDelivery [
 	"Locate the context responsible with initiating the delivery of a subscription.
 	From this context the active subscriptions and the current executing subscription,
 	should be extracted."
@@ -71,7 +71,7 @@ ACDStackFilter >> locateAnnouncementDelivery [
 ]
 
 { #category : #actions }
-ACDStackFilter >> locateAnnouncerEntryPoint [
+ACDContextLocator >> locateAnnouncerEntryPoint [
 	"Locate the initial context that triggered the delivery of
 	a subscription. The initial context is the first that send 
 	the message announce:"
@@ -83,19 +83,19 @@ ACDStackFilter >> locateAnnouncerEntryPoint [
 ]
 
 { #category : #accessing }
-ACDStackFilter >> result [
+ACDContextLocator >> result [
 
 	^ context
 ]
 
 { #category : #private }
-ACDStackFilter >> sender [
+ACDContextLocator >> sender [
 
 	^ context isNil ifFalse: [ context := context sender ]
 ]
 
 { #category : #'filtering actions' }
-ACDStackFilter >> skipAllInternalAnnouncerContexts [
+ACDContextLocator >> skipAllInternalAnnouncerContexts [
 	"Filter all contexts until the one that triggered the announcer is found."
 	
 	self findContextSuchThat: [ :ctxt | 
@@ -104,14 +104,14 @@ ACDStackFilter >> skipAllInternalAnnouncerContexts [
 ]
 
 { #category : #'filtering actions' }
-ACDStackFilter >> skipAnnounceContexts [
+ACDContextLocator >> skipAnnounceContexts [
 	
 	self findContextSuchThat: [ :ctxt | 
 		(ctxt methodSelector ~= #announce:) ]
 ]
 
 { #category : #'filtering actions' }
-ACDStackFilter >> skipUntilSubscriptionDeliveryContext [
+ACDContextLocator >> skipUntilSubscriptionDeliveryContext [
 
 	self findContextSuchThat: [ :aContext | 
 		aContext receiver class = SubscriptionRegistry and: [  
