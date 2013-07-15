@@ -5,6 +5,6 @@ ChangeDebuggerAction classSide >> gtACDChangeDebuggerActionsFor: aDebugger [
 	<gtACDReceiverDebuggingAction>
 	
 	^ self 
-		changeDebuggerActionsForContext: aDebugger currentContext 
+		changeDebuggerActionsForContext: aDebugger interruptedContext 
 		excluding: aDebugger
 ]
