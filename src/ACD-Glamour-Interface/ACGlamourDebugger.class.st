@@ -26,12 +26,11 @@ ACGlamourDebugger class >> handlesContext: aContext [
 	 ^ (self sessionClass stackFilterFor: aContext) locateAnnouncerEntryPoint notNil 
 ]
 
-{ #category : #'class initialization' }
-ACGlamourDebugger class >> initialize [ 
-	super initialize.
+{ #category : #'tools registry' }
+ACGlamourDebugger class >> registerToolsOn: registry [
 
 	"Add ourselves to registry. See [Smalltalk tools]" 
-	Smalltalk tools registerDebugger: self withRank: 10.
+	registry registerDebugger: self withRank: 10.
 ]
 
 { #category : #private }
