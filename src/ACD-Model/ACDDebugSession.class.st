@@ -78,6 +78,12 @@ ACDDebugSession >> hasMoreActiveSubscriptions [
 	^ announcerModel hasMoreActiveSubscriptions
 ]
 
+{ #category : #testing }
+ACDDebugSession >> hasSubscriptionExecuted: aSubscription [
+
+	^ announcerModel hasSubscriptionExecuted: aSubscription
+]
+
 { #category : #initialization }
 ACDDebugSession >> initializeSenderContext: aSenderContext announcerContext: anAnnouncerContext receiverContext: aReceiverContext [
 

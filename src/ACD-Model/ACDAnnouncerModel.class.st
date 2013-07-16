@@ -108,6 +108,12 @@ ACDAnnouncerModel >> hasMoreActiveSubscriptions [
 	^ executingSubscriptionIndex < activeSubscriptions size
 ]
 
+{ #category : #testing }
+ACDAnnouncerModel >> hasSubscriptionExecuted: aSubscription [
+
+	^ (self activeSubscriptions indexOf: aSubscription ifAbsent: [ 0 ]) < executingSubscriptionIndex 
+]
+
 { #category : #initialization }
 ACDAnnouncerModel >> reset [
 
