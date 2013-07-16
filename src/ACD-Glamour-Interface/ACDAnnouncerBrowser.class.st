@@ -48,19 +48,7 @@ ACDAnnouncerBrowser >> compose [
 		browser transmit to: #components; andShow: [:aComposite | 
 			self componentsIn: aComposite ].
 		
-		browser transmit 
-			to: #components port: #selection; 
-			from: #components port: #entity ;
-			when: [ :aSession | aSession notNil ];
-			transformed: [ :aSession |  aSession executingSubscription  ].
-		
-		browser transmit from: #components port: #strongSelection; toOutsidePort: #selection.
-		
-		"browser transmit from: #components port: #selection; toWatcher; andShow: [:a |
-			a dynamic display: [:anObject | GLMTextPresentation  new ]]"].
-				"GTInspector startOn: anObject ] ] ]."
-	
-
+		browser transmit from: #components port: #strongSelection; toOutsidePort: #selection ]
 ]
 
 { #category : #accessing }
@@ -73,14 +61,6 @@ ACDAnnouncerBrowser >> debugger [
 ACDAnnouncerBrowser >> debugger: anObject [
 
 	debugger := anObject 
-]
-
-{ #category : #private }
-ACDAnnouncerBrowser >> highlightColorForSubscription: aSubscription [ 
-
-	^ self session executingSubscription == aSubscription 
-		ifTrue: [Color lightGray] 
-		ifFalse: [Color transparent] 
 ]
 
 { #category : #'building actions' }
@@ -113,12 +93,26 @@ ACDAnnouncerBrowser >> subscriptionsIn: aComposite [
 		showOnly: 100;
 		display: [ :aSession | aSession activeSubscriptions ];
 		column: 'Announcement Type' evaluated: [ :aSubscription | 
-			self printAnnouncementTypeFor: aSubscription announcementClass];
+			Text 
+				string: (self printAnnouncementTypeFor: aSubscription announcementClass )
+				attributes: (self textAttributesForSubscription: aSubscription) ];
 		column: 'Action' evaluated: [ :aSubscription | 
-			aSubscription action printString ];
-		textBackgroundColor: [ :aSubscription |
-			self highlightColorForSubscription: aSubscription ];
+			Text 
+				string: (aSubscription action printString )
+				attributes: (self textAttributesForSubscription: aSubscription) ];
 		selectionAct: [:each |  each selection explore] on: $i entitled: 'Explore';
 		with: [ :presentation |
 			self installSubscriptionsActionsIn: presentation ]
+]
+
+{ #category : #private }
+ACDAnnouncerBrowser >> textAttributesForSubscription: aSubscription [ 
+
+	(self session executingSubscription == aSubscription) 
+		ifTrue: [ ^ {TextEmphasis bold} ].
+		
+	(self session hasSubscriptionExecuted: aSubscription )
+		ifTrue: [ ^ {TextColor color: Color lightGray. TextEmphasis italic} ].
+		
+	^ {TextColor black}
 ]
