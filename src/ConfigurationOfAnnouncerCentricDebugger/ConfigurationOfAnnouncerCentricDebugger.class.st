@@ -78,9 +78,9 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline01: spec [
 	spec for: #common do: [
 		spec blessing: #baseline.
 		spec repository: 'http://www.smalltalkhub.com/mc/AndreiChis/AnnouncerCentricDebugger/main'.
-		spec 
-			package: 'ACD-Model' with: [spec requires: #('NewDebugger-Core')];
-			package: 'ACD-Glamour-Interface' with: [spec requires: #('Core' 'DebuggerExtensions')].
+		spec
+                        package: 'ACD-Model' with: [spec requires: #('NewDebugger-Core' 'DebuggerActions')];
+                        package: 'ACD-Glamour-Interface' with: [spec requires: #('Core' 'DebuggerExtensions' 'GT-Debugger')].
 
 		spec group: 'default' with: #(
 			'Core'
@@ -90,6 +90,14 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline01: spec [
 		spec group: 'UI' with: #(
 			'ACD-Glamour-Interface' ).
 			
+		spec project: 'GT-Debugger' with: [
+                                spec
+                                        className: 'ConfigurationOfGToolkit';
+                                        file: 'ConfigurationOfGToolkit';
+                                        version: #development;
+                                        loads: 'GT-Debugger';
+                                        repository: 'http://www.smalltalkhub.com/mc/Moose/GToolkit/main' ].
+			
 		spec project: 'NewDebugger-Core' with: [
 				spec
 					className: 'ConfigurationOfNewDebugger';
@@ -97,7 +105,8 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline01: spec [
 					version: #stable;
 					loads: 'Core';
 					repository: 'http://www.smalltalkhub.com/mc/Pharo/Debugger/main' ].
-		spec package: 'DebuggerExtensions' with: [ spec repository: 'http://www.smalltalkhub.com/mc/AndreiChis/Playground/main' ]
+		spec package: 'DebuggerExtensions' with: [ spec repository: 'http://www.smalltalkhub.com/mc/AndreiChis/Playground/main' ].
+		spec package: 'DebuggerActions' with: [ spec repository: 'http://www.smalltalkhub.com/mc/AndreiChis/Playground/main' ]
 	]
 ]
 
