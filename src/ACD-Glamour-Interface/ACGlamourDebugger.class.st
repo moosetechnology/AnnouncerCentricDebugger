@@ -77,9 +77,10 @@ ACGlamourDebugger >> codePresentationIn: composite [
 	^ composite smalltalkCode
 		title: [ :aContext | GTInspector new printObjectAsAnItem: aContext receiver ];
 		doItReceiver: [ :aContext | aContext receiver ];
+		doItContext: [ :aContext | aContext ];
 		format: [ :aContext | aContext  sourceCode];
 		smalltalkClass: [ :aContext | aContext methodClass ];
-		act: [:each |  each entity receiver explore] on: $i entitled: 'Explore'
+		act: [:each |  each entity receiver explore] on: $e entitled: 'Explore'
 ]
 
 { #category : #'accessing context' }
