@@ -45,25 +45,27 @@ ACDDebugSession >> announcerContext [
 	^ announcerModel context
 ]
 
+{ #category : #'as yet unclassified' }
+ACDDebugSession >> createStepPredicateForPredicate: aPredicate [
+
+	^ self createStepPredicateForPredicate: aPredicate fromContext: self announcerContext
+]
+
 { #category : #predicates }
 ACDDebugSession >> deliveryCompletionPredicateForSubscription: aSubscription. [
 	
-	^ StepContextPredicate new 
-			baseContext: self announcerContext;
-			predicate: [ :aContext |  
-				aContext receiver == aSubscription subscriber and: [
-					aContext method selector = aSubscription action selector] ].
+	^ self createPredicateForBlock: [ :aContext |  
+			aContext receiver == aSubscription subscriber and: [
+				aContext method selector = aSubscription action selector] ].
 ]
 
 { #category : #predicates }
 ACDDebugSession >> deliveryInitializationPredicate [ 
 
-	^ StepContextPredicate new 
-			baseContext: self announcerContext;
-			predicate: [ :aContext | 
-				aContext receiver isSubscription and: [  
-					aContext selector =  #deliver: and: [ 
-						aContext closure notNil ] ] ]
+	^ self createPredicateForBlock: [ :aContext | 
+			aContext receiver isSubscription and: [  
+				aContext selector =  #deliver: and: [ 
+					aContext closure notNil ] ] ]
 ]
 
 { #category : #accessing }
@@ -124,19 +126,17 @@ ACDDebugSession >> stackFilterFor: aContext [
 
 { #category : #'debugging actions' }
 ACDDebugSession >> stepToNextSubscription [
-	| deliveryInitializationPredicate deliveryCompletionPredicate |
-
 	"Step over the delivery of the current announcement."
 	self stepOver: announcerModel announcementDeliveryLoopContext.
+
+	self newStepUntil: self deliveryInitializationPredicate from: self interruptedContext.
 	
-	deliveryInitializationPredicate := self deliveryInitializationPredicate.
-	self stepUntil: deliveryInitializationPredicate from: self context.
-	
-	deliveryInitializationPredicate hasMatched ifTrue: [ 
-		deliveryCompletionPredicate := self deliveryCompletionPredicateForSubscription: self context receiver.
-		self stepUntil: deliveryCompletionPredicate.
+	(self deliveryInitializationPredicate matches: self interruptedContext) ifTrue: [ 
+		self 
+			newStepUntil: (self deliveryCompletionPredicateForSubscription: self interruptedContext receiver) 
+			from: self interruptedContext.
 		
-		self updateFromReceiverContext: self context ].
+		self updateFromReceiverContext: self interruptedContext ].
 ]
 
 { #category : #updating }
