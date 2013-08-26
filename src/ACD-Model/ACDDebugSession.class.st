@@ -129,11 +129,11 @@ ACDDebugSession >> stepToNextSubscription [
 	"Step over the delivery of the current announcement."
 	self stepOver: announcerModel announcementDeliveryLoopContext.
 
-	self newStepUntil: self deliveryInitializationPredicate from: self interruptedContext.
+	self stepUntil: self deliveryInitializationPredicate from: self interruptedContext.
 	
 	(self deliveryInitializationPredicate matches: self interruptedContext) ifTrue: [ 
 		self 
-			newStepUntil: (self deliveryCompletionPredicateForSubscription: self interruptedContext receiver) 
+			stepUntil: (self deliveryCompletionPredicateForSubscription: self interruptedContext receiver) 
 			from: self interruptedContext.
 		
 		self updateFromReceiverContext: self interruptedContext ].
