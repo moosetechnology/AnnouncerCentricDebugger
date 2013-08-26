@@ -5,10 +5,10 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-ACDStackDebugAction class >> gtStackActions [
+ACDStackDebugAction class >> gtStackActionsFor: aDebugger [
 	<gtACDReceiverDebuggingAction>
 	
-	^ super gtStackActions
+	^ super gtStackActionsFor: aDebugger
 ]
 
 { #category : #testing }

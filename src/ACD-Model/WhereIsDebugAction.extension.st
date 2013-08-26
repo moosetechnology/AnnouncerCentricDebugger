@@ -4,7 +4,7 @@ Extension { #name : #WhereIsDebugAction }
 WhereIsDebugAction class >> gtACDReceiverActionFor: aDebugger [
 	<gtACDReceiverDebuggingAction>
 	
-	^ self new
+	^ (self forDebugger: aDebugger)
 		action: #updateReceiverCodeSelection
 ]
 
@@ -12,6 +12,6 @@ WhereIsDebugAction class >> gtACDReceiverActionFor: aDebugger [
 WhereIsDebugAction class >> gtACDSenderActionFor: aDebugger [
 	<gtACDSenderDebuggingAction>
 	
-	^ self new
+	^ (self forDebugger: aDebugger)
 		action: #updateSenderCodeSelection
 ]
