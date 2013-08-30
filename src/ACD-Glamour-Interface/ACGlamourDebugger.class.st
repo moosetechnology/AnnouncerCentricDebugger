@@ -74,12 +74,8 @@ ACGlamourDebugger >> announcerIn: composite [
 { #category : #'building presentations' }
 ACGlamourDebugger >> codePresentationIn: composite [
 
-	^ composite smalltalkCode
+	^ (self methodCodeWidgetIn: composite)
 		title: [ :aContext | GTInspector new printObjectAsAnItem: aContext receiver ];
-		doItReceiver: [ :aContext | aContext receiver ];
-		doItContext: [ :aContext | aContext ];
-		format: [ :aContext | aContext  sourceCode];
-		smalltalkClass: [ :aContext | aContext methodClass ];
 		act: [:each |  each entity receiver explore] on: $e entitled: 'Explore'
 ]
 
