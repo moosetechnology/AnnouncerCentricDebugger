@@ -149,14 +149,6 @@ ACGlamourDebugger >> receiverSelectionInterval [
 	^ self selectionIntervalForPane: #receiver
 ]
 
-{ #category : #actions }
-ACGlamourDebugger >> resume [
-
-	self session resume.
-	self session clear.
-	self browser close
-]
-
 { #category : #'accessing context' }
 ACGlamourDebugger >> selectedContext [
 
