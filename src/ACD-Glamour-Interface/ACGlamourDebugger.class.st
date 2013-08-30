@@ -178,11 +178,7 @@ ACGlamourDebugger >> senderIn: composite [
 { #category : #'building presentations' }
 ACGlamourDebugger >> stackIn: composite [
 
-	composite list	
-		title: 'Stack';
-		showOnly: 50;
-		display: #stack;
-		format: [ :each | String streamContents: [:stream | each printDebugOn: stream ] ];
+	(self stackWidgetIn: composite)
 		selectionAct: [:each|  each selection explore] on: $i entitled: 'Explore'
 
 ]
