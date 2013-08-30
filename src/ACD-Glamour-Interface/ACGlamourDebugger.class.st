@@ -4,16 +4,6 @@ Class {
 	#category : #'ACD-Glamour-Interface'
 }
 
-{ #category : #opening }
-ACGlamourDebugger class >> debugBasedOnSession: aSession [
-	|debugger|
-	
-	debugger := self new. 
-	debugger process: aSession process controller: nil context: aSession context.
-	debugger session errorWasInUIProcess: aSession errorWasInUIProcess.
-	debugger open
-]
-
 { #category : #accessing }
 ACGlamourDebugger class >> defaultTitle [
 
@@ -37,25 +27,6 @@ ACGlamourDebugger class >> registerToolsOn: registry [
 ACGlamourDebugger class >> sessionClass [
 
 	^ ACDDebugSession 
-]
-
-{ #category : #accessing }
-ACGlamourDebugger class >> spanCompleteSessionForContext: aContext fromProcess: anInterruptedProcess [
-	|session announcerContext|
-	
-	announcerContext := (ACDContextLocator forContext: aContext sender) locateAnnouncerEntryPoint.
-	session := (self spanSessionForContext: aContext fromProcess: anInterruptedProcess).		
-	session 
-		initializeSenderContext: announcerContext sender 
-		announcerContext: announcerContext 
-		receiverContext: aContext.
-	^ session
-]
-
-{ #category : #accessing }
-ACGlamourDebugger class >> spanSessionForContext: aContext fromProcess: anInterruptedProcess [
-
-	^ self sessionClass process: anInterruptedProcess context: aContext 
 ]
 
 { #category : #'building presentations' }
@@ -127,12 +98,6 @@ ACGlamourDebugger >> installReceiverActionsFor: aPresentation [
 ACGlamourDebugger >> installSenderActionsFor: aPresentation [
 
 	self installActionsForRootPragmas: { #ACDSenderDebuggingAction } in: aPresentation
-]
-
-{ #category : #initialization }
-ACGlamourDebugger >> process: aProcess controller: aController context: aContext [
-
-	self session: (self class spanCompleteSessionForContext: aContext fromProcess: aProcess)
 ]
 
 { #category : #'building presentations' }
