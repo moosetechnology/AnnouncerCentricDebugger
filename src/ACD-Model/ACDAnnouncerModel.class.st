@@ -17,8 +17,7 @@ Class {
 		'receiverContext',
 		'announcement',
 		'executingSubscriptionIndex',
-		'activeSubscriptions',
-		'idleSubscriptions'
+		'activeSubscriptions'
 	],
 	#category : #'ACD-Model'
 }
@@ -33,16 +32,6 @@ ACDAnnouncerModel class >> forAnnouncerContext: announcerContext receiverContext
 ACDAnnouncerModel >> activeSubscriptions [
 
 	^ OrderedCollection new  
-		addAll: activeSubscriptions;
-		yourself
-	
-]
-
-{ #category : #accessing }
-ACDAnnouncerModel >> allSubscriptions [
-
-	^ OrderedCollection new  
-		addAll: idleSubscriptions; 
 		addAll: activeSubscriptions;
 		yourself
 	
@@ -132,7 +121,6 @@ ACDAnnouncerModel >> resetSubscriptions [
 
 	executingSubscriptionIndex := 0.
 	activeSubscriptions := Array new.
-	idleSubscriptions := Array new.
 ]
 
 { #category : #private }

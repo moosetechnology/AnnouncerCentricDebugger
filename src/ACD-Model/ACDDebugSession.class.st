@@ -22,12 +22,6 @@ ACDDebugSession >> activeSubscriptions [
 ]
 
 { #category : #accessing }
-ACDDebugSession >> allSubscriptions [
-
-	^ announcerModel allSubscriptions
-]
-
-{ #category : #accessing }
 ACDDebugSession >> announcement [
 
 	^ announcerModel announcement 
@@ -45,7 +39,7 @@ ACDDebugSession >> announcerContext [
 	^ announcerModel context
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'predicates creation' }
 ACDDebugSession >> createStepPredicateForPredicate: aPredicate [
 
 	^ self createStepPredicateForPredicate: aPredicate fromContext: self announcerContext
@@ -94,7 +88,7 @@ ACDDebugSession >> initializeSenderContext: aSenderContext announcerContext: anA
 	receiverContext := aReceiverContext 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 ACDDebugSession >> process: aProcess context: aContext [
 	| announcerContext |
 	super process: aProcess context: aContext.
