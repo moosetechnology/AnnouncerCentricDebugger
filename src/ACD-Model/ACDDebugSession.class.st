@@ -28,6 +28,12 @@ ACDDebugSession >> announcement [
 ]
 
 { #category : #accessing }
+ACDDebugSession >> announcementDeliveryLoopContext [
+	
+	^ (self stackFilterFor: receiverContext) locateAnnouncementDelivery
+]
+
+{ #category : #accessing }
 ACDDebugSession >> announcer [
 
 	^ announcerModel announcer
@@ -135,7 +141,7 @@ ACDDebugSession >> stackFilterFor: aContext [
 { #category : #'debugging actions' }
 ACDDebugSession >> stepToNextSubscription [
 	"Step over the delivery of the current announcement."
-	self stepOver: announcerModel announcementDeliveryLoopContext.
+	self stepOver: self announcementDeliveryLoopContext.
 
 	self stepUntil: self deliveryInitializationPredicate from: self interruptedContext.
 	

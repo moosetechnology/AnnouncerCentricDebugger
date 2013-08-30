@@ -14,7 +14,6 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'announcerContext',
-		'receiverContext',
 		'announcement',
 		'executingSubscriptionIndex',
 		'activeSubscriptions'
@@ -41,12 +40,6 @@ ACDAnnouncerModel >> activeSubscriptions [
 ACDAnnouncerModel >> announcement [ 
 
 	^ announcement 
-]
-
-{ #category : #accessing }
-ACDAnnouncerModel >> announcementDeliveryLoopContext [
-	
-	^ (self stackFilterFor: receiverContext) locateAnnouncementDelivery
 ]
 
 { #category : #accessing }
@@ -81,8 +74,6 @@ ACDAnnouncerModel >> forAnnouncerContext: anAnnouncerContext receiverContext: aR
 	announcement := stackFilter extractAnnouncement.
 	executingSubscriptionIndex := stackFilter extractExecutingSubscriptionIndex. 
 	activeSubscriptions := Array withAll: stackFilter extractActiveSubscriptions.
-		
-	receiverContext := aReceiverContext 
 	
 	
 	
@@ -107,7 +98,6 @@ ACDAnnouncerModel >> hasSubscriptionExecuted: aSubscription [
 ACDAnnouncerModel >> reset [
 
 	announcerContext := nil.
-	receiverContext := nil.
 	announcement := nil.
 	self resetSubscriptions.
 	
