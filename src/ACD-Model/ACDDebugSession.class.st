@@ -28,7 +28,7 @@ ACDDebugSession >> announcement [
 ]
 
 { #category : #accessing }
-ACDDebugSession >> announcementDeliveryLoopContext [
+ACDDebugSession >> announcementLoopContext [
 	
 	^ (self stackFilterFor: receiverContext) locateAnnouncementDelivery
 ]
@@ -52,15 +52,7 @@ ACDDebugSession >> createStepPredicateForPredicate: aPredicate [
 ]
 
 { #category : #predicates }
-ACDDebugSession >> deliveryCompletionPredicateForSubscription: aSubscription. [
-	
-	^ self createPredicateForBlock: [ :aContext |  
-			aContext receiver == aSubscription subscriber and: [
-				aContext method selector = aSubscription action selector] ].
-]
-
-{ #category : #predicates }
-ACDDebugSession >> deliveryInitializationPredicate [ 
+ACDDebugSession >> deliveryStart [ 
 
 	^ self createPredicateForBlock: [ :aContext | 
 			aContext receiver isSubscription and: [  
@@ -141,16 +133,35 @@ ACDDebugSession >> stackFilterFor: aContext [
 { #category : #'debugging actions' }
 ACDDebugSession >> stepToNextSubscription [
 	"Step over the delivery of the current announcement."
-	self stepOver: self announcementDeliveryLoopContext.
-
-	self stepUntil: self deliveryInitializationPredicate from: self interruptedContext.
 	
-	(self deliveryInitializationPredicate matches: self interruptedContext) ifTrue: [ 
-		self 
-			stepUntil: (self deliveryCompletionPredicateForSubscription: self interruptedContext receiver) 
-			from: self interruptedContext.
-		
-		self updateFromReceiverContext: self interruptedContext ].
+	self stepOver: self announcementLoopContext.
+	self stepUntil: self deliveryStart.
+	(self deliveryStart matches: self interruptedContext) ifTrue: [ 
+		self stepUntil: (self subscriptionCompletion).
+		self updateReceiver ].
+]
+
+{ #category : #'debugging actions' }
+ACDDebugSession >> stepUntil: aPredicate [
+
+	^ self stepUntil: aPredicate from: self interruptedContext.
+]
+
+{ #category : #predicates }
+ACDDebugSession >> subscriptionCompletion [ 
+	| aSubscription |
+	aSubscription := self interruptedContext receiver.
+	^ self createPredicateForBlock: [ :aContext |  
+			aContext receiver == aSubscription subscriber and: [
+				aContext method selector = aSubscription action selector] ].
+]
+
+{ #category : #predicates }
+ACDDebugSession >> subscriptionCompletionFor: aSubscription. [
+	
+	^ self createPredicateForBlock: [ :aContext |  
+			aContext receiver == aSubscription subscriber and: [
+				aContext method selector = aSubscription action selector] ].
 ]
 
 { #category : #updating }
@@ -159,4 +170,10 @@ ACDDebugSession >> updateFromReceiverContext: aContext [
 
 	announcerContext := (self stackFilterFor: aContext sender) locateAnnouncerEntryPoint.
 	self initializeSenderContext: announcerContext sender announcerContext: announcerContext receiverContext: aContext
+]
+
+{ #category : #updating }
+ACDDebugSession >> updateReceiver [
+	
+	^ self updateFromReceiverContext: self interruptedContext
 ]
