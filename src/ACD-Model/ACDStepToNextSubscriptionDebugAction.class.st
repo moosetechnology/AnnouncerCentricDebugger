@@ -1,10 +1,10 @@
 Class {
 	#name : #ACDStepToNextSubscriptionDebugAction,
-	#superclass : #MessageSendDebugAction,
+	#superclass : #DebugAction,
 	#category : #'ACD-Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #registration }
 ACDStepToNextSubscriptionDebugAction class >> acdActionType [
 	<gtACDSubscriptionDebuggingAction>
 ]
@@ -15,16 +15,29 @@ ACDStepToNextSubscriptionDebugAction >> appliesToContext: aContext [
 	^ self session hasMoreActiveSubscriptions
 ]
 
-{ #category : #accessing }
-ACDStepToNextSubscriptionDebugAction >> defaultReceiver [
+{ #category : #predicates }
+ACDStepToNextSubscriptionDebugAction >> deliveryStart [ 
 
-	^ self session
+	^ self session createPredicateForBlock: [ :aContext | 
+			aContext receiver isSubscription and: [  
+				aContext selector =  #deliver: and: [ 
+					aContext closure notNil ] ] ]
 ]
 
-{ #category : #'initialize-release' }
+{ #category : #actions }
+ACDStepToNextSubscriptionDebugAction >> executeAction [ 
+	"Step over the delivery of the current announcement."
+	
+	self session stepOver: self session announcementLoopContext.
+	self session stepUntil: self deliveryStart.
+	(self deliveryStart matches: self interruptedContext) ifTrue: [ 
+		self session stepUntil: (self session subscriptionDelivery).
+		self session updateReceiver ]
+]
+
+{ #category : #initialization }
 ACDStepToNextSubscriptionDebugAction >> initialize [
 
-	self action: #stepToNextSubscription.
 	self label: 'Next subscription'.
 	self icon: GLMUIThemeExtraIcons glamorousOver.
 ]

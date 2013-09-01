@@ -4,7 +4,7 @@ Class {
 	#category : #'ACD-Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #registration }
 ACDStackDebugAction class >> gtStackActionsFor: aDebugger [
 	<gtACDReceiverDebuggingAction>
 	
