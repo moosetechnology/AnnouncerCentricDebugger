@@ -157,3 +157,9 @@ ACDDebugSession >> updateReceiver [
 	
 	^ self updateFromReceiverContext: self interruptedContext
 ]
+
+{ #category : #updating }
+ACDDebugSession >> updateSenderFrom: aContext [
+
+	senderContext := aContext
+]
