@@ -43,10 +43,10 @@ ACGlamourDebugger >> announcerIn: composite [
 ]
 
 { #category : #'building presentations' }
-ACGlamourDebugger >> codePresentationIn: composite [
+ACGlamourDebugger >> codePresentationIn: aComposite forContext: aContext [
 
-	^ (self methodCodeWidgetIn: composite)
-		title: [ :aContext | GTInspector new printObjectAsAnItem: aContext receiver ];
+	^ (self methodCodeWidgetIn: aComposite forContext: aContext)
+		title: [ GTInspector new printObjectAsAnItem: aContext receiver ];
 		act: [:each |  each entity receiver explore] on: $e entitled: 'Explore'
 ]
 
@@ -72,16 +72,19 @@ ACGlamourDebugger >> debuggerStructureIn: browser [
 ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 
 	browser transmit
+			fromOutsideEntityPort;
 			to: #receiver;
 			when: [ :session | session notNil ];
-			transformed: [:session | session context];
+			"transformed: [:session | session context];"
 			andShow: [ :composite | self receiverIn: composite ].	
 		browser transmit
+			fromOutsideEntityPort;
 			to: #announcer;
 			andShow: [ :composite | self announcerIn: composite ].
 		browser transmit
+			fromOutsideEntityPort;
 			to: #sender;
-			transformed: [:session | session senderContext];
+			"transformed: [:session | session senderContext];"
 			andShow: [ :composite | self senderIn: composite ].
 		browser transmit
 			to: #stack;
@@ -101,9 +104,17 @@ ACGlamourDebugger >> installSenderActionsFor: aPresentation [
 ]
 
 { #category : #'building presentations' }
+ACGlamourDebugger >> printStackEntry: aContext [
+
+	^ Text 
+		string: (super printStackEntry: aContext )
+		attributes: (self textAttributesForStackEntry: aContext) 
+]
+
+{ #category : #'building presentations' }
 ACGlamourDebugger >> receiverIn: composite [
 
-	(self codePresentationIn: composite)
+	(self codePresentationIn: composite forContext: self session context)
 		initialize: [ :code | code selectionInterval: (self session selectedCodeRangeForContext: self currentContext) ];
 		with: [ :code | self installReceiverActionsFor: code ]
 ]
@@ -123,7 +134,7 @@ ACGlamourDebugger >> selectedContext [
 { #category : #'building presentations' }
 ACGlamourDebugger >> senderIn: composite [
 
-	(self codePresentationIn: composite)
+	(self codePresentationIn: composite forContext: self session senderContext)
 		initialize: [ :code | code selectionInterval: (self session selectedCodeRangeForContext: self session senderContext) ];
 		with: [ :code | self installSenderActionsFor: code ]
 ]
@@ -134,6 +145,23 @@ ACGlamourDebugger >> stackIn: composite [
 	(self stackWidgetIn: composite)
 		selectionAct: [:each|  each selection explore] on: $i entitled: 'Explore'
 
+]
+
+{ #category : #'private utilities' }
+ACGlamourDebugger >> textAttributesForStackEntry: aContext [
+	| ctxt |
+	(self session receiverContext  == aContext )
+		ifTrue: [ ^ {TextEmphasis bold} ].
+
+	(self session senderContext == aContext) 
+		ifTrue: [ ^ {TextEmphasis bold} ].
+	
+	ctxt := aContext findContextSuchThat: [ :aSenderContext |
+		(aSenderContext == self session receiverContext) or: [  aSenderContext == self session senderContext ]  ].
+	ctxt == self session receiverContext ifTrue: [  ^ {TextColor black} ].
+	ctxt == self session senderContext ifTrue: [  ^ {TextColor gray} ].
+		
+	^ {TextColor black}
 ]
 
 { #category : #updating }
