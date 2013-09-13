@@ -42,6 +42,12 @@ ACGlamourDebugger >> announcerIn: composite [
 
 ]
 
+{ #category : #accessing }
+ACGlamourDebugger >> announcersBrowser [
+
+	^ ((self browser paneNamed: #announcer) presentations first panes first presentations first) 
+]
+
 { #category : #'building presentations' }
 ACGlamourDebugger >> codePresentationIn: aComposite forContext: aContext [
 
@@ -75,7 +81,6 @@ ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 			fromOutsideEntityPort;
 			to: #receiver;
 			when: [ :session | session notNil ];
-			"transformed: [:session | session context];"
 			andShow: [ :composite | self receiverIn: composite ].	
 		browser transmit
 			fromOutsideEntityPort;
@@ -84,7 +89,6 @@ ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 		browser transmit
 			fromOutsideEntityPort;
 			to: #sender;
-			"transformed: [:session | session senderContext];"
 			andShow: [ :composite | self senderIn: composite ].
 		browser transmit
 			to: #stack;
@@ -129,6 +133,12 @@ ACGlamourDebugger >> receiverSelectionInterval [
 ACGlamourDebugger >> selectedContext [
 
 	^ self interruptedContext
+]
+
+{ #category : #accessing }
+ACGlamourDebugger >> selectedSubscription [
+	
+	^  self announcersBrowser selectedSubscription 
 ]
 
 { #category : #'building presentations' }

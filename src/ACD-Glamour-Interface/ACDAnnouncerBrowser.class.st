@@ -31,6 +31,12 @@ ACDAnnouncerBrowser >> announcerIn: aComposite [
 
 ]
 
+{ #category : #accessing }
+ACDAnnouncerBrowser >> browser [ 
+
+	^ self presentations first
+]
+
 { #category : #building }
 ACDAnnouncerBrowser >> componentsIn: aComposite [ 
 
@@ -77,6 +83,12 @@ ACDAnnouncerBrowser >> printAnnouncementTypeFor: anAnnouncementType [
 			String streamContents: [:s | anAnnouncementType printElementsOn: s]] 
 		ifFalse: [
 			anAnnouncementType printString]
+]
+
+{ #category : #accessing }
+ACDAnnouncerBrowser >> selectedSubscription [
+
+	^ ((self browser paneNamed: #components) port: #selection)  value
 ]
 
 { #category : #accessing }
