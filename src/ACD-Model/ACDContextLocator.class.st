@@ -16,26 +16,26 @@ ACDContextLocator class >> forContext: aContext [
 { #category : #'accessing actions' }
 ACDContextLocator >> extractActiveSubscriptions [
 
-	^ context ifNotNilDo: [:aContext| aContext tempAt: 2]
+	^ context ifNotNilDo: [:aContext| aContext tempNamed: 'subs']
 ]
 
 { #category : #'accessing actions' }
 ACDContextLocator >> extractAnnouncement [
 
-	^ context ifNotNilDo: [:aContext| aContext tempAt: 1]
+	^ context ifNotNilDo: [:aContext| aContext tempNamed: 'anAnnouncement']
 ]
 
 { #category : #'accessing actions' }
 ACDContextLocator >> extractExecutingSubscription [
 	
 	^ context ifNotNilDo: [:aContext|
-		(aContext tempAt: 2) at: (aContext tempAt: 4)  ]
+		(aContext tempNamed: 'subs') at: (aContext tempNamed: 'index')  ]
 ]
 
 { #category : #'accessing actions' }
 ACDContextLocator >> extractExecutingSubscriptionIndex [
 
-	^ context ifNotNilDo: [:aContext| aContext tempAt: 4 ]
+	^ context ifNotNilDo: [:aContext| aContext tempNamed: 'index' ]
 ]
 
 { #category : #private }
@@ -107,7 +107,8 @@ ACDContextLocator >> skipAllInternalAnnouncerContexts [
 ACDContextLocator >> skipAnnounceContexts [
 	
 	self findContextSuchThat: [ :ctxt | 
-		(ctxt methodSelector ~= #announce:) ]
+		(ctxt methodSelector = #announce:) and: [ 
+			ctxt sender methodSelector ~= #announce: ] ]
 ]
 
 { #category : #'filtering actions' }

@@ -15,6 +15,12 @@ ACDStepToNextSubscriptionDebugAction >> appliesToContext: aContext [
 	^ self session hasMoreActiveSubscriptions
 ]
 
+{ #category : #testing }
+ACDStepToNextSubscriptionDebugAction >> appliesToDebugger: aDebugger [
+
+	^ aDebugger session hasMoreActiveSubscriptions
+]
+
 { #category : #predicates }
 ACDStepToNextSubscriptionDebugAction >> deliveryStart [ 
 

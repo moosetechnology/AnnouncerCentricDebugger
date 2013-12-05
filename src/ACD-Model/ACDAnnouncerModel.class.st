@@ -63,7 +63,7 @@ ACDAnnouncerModel >> executingSubscription [
 { #category : #initialization }
 ACDAnnouncerModel >> forAnnouncerContext: anAnnouncerContext receiverContext: aReceiverContext [
 	|stackFilter|
-	
+
 	self reset.
 	
 	announcerContext := anAnnouncerContext.
