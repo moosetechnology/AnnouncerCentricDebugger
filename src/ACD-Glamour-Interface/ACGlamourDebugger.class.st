@@ -98,7 +98,7 @@ ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 { #category : #'building actions' }
 ACGlamourDebugger >> installReceiverActionsFor: aPresentation [
 
-	self installActionsForRootPragmas: { #debuggingAction } in: aPresentation
+	self installActionsForRootPragmas: #(debuggingAction codeDebuggingAction) in: aPresentation
 ]
 
 { #category : #'building actions' }
@@ -180,6 +180,12 @@ ACGlamourDebugger >> updateReceiverCodeSelection [
 	((self browser paneNamed: #receiver) 
 		port: #selectionInterval) 
 			value:  (self session selectedCodeRangeForContext:  self currentContext)
+]
+
+{ #category : #updating }
+ACGlamourDebugger >> updateSelectionInterval [
+	self updateReceiverCodeSelection
+
 ]
 
 { #category : #updating }
