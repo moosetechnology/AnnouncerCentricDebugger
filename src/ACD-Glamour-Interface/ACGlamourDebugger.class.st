@@ -76,23 +76,26 @@ ACGlamourDebugger >> debuggerStructureIn: browser [
 
 { #category : #building }
 ACGlamourDebugger >> debuggerTransmissionsIn: browser [
-
+	
 	browser transmit
-			fromOutsideEntityPort;
-			to: #receiver;
-			when: [ :session | session notNil ];
-			andShow: [ :composite | self receiverIn: composite ].	
-		browser transmit
-			fromOutsideEntityPort;
-			to: #announcer;
-			andShow: [ :composite | self announcerIn: composite ].
-		browser transmit
-			fromOutsideEntityPort;
-			to: #sender;
-			andShow: [ :composite | self senderIn: composite ].
-		browser transmit
-			to: #stack;
-			andShow: [ :composite | self stackIn: composite ]
+		to: #stack;
+		andShow: [ :composite | self stackIn: composite ].
+	browser transmit
+		from: #stack port: #entity;
+		to: #stack port: #currentContext;
+		transformed: [ self currentContext ].
+			
+	browser transmit
+		from: #stack port: #currentContext;
+		to: #receiver;
+		when: [ :session | session notNil ];
+		andShow: [ :composite | self receiverIn: composite ].
+	browser transmit
+		to: #announcer;
+		andShow: [ :composite | self announcerIn: composite ].
+	browser transmit
+		to: #sender;
+		andShow: [ :composite | self senderIn: composite ]
 ]
 
 { #category : #'building actions' }
@@ -105,6 +108,12 @@ ACGlamourDebugger >> installReceiverActionsFor: aPresentation [
 ACGlamourDebugger >> installSenderActionsFor: aPresentation [
 
 	self installActionsForRootPragmas: { #ACDSenderDebuggingAction } in: aPresentation
+]
+
+{ #category : #'building actions' }
+ACGlamourDebugger >> installStackActionsFor: aPresentation [
+
+	self installActionsForRootPragmas: { #ACDStackDebuggingAction } in: aPresentation
 ]
 
 { #category : #'building presentations' }
@@ -120,7 +129,14 @@ ACGlamourDebugger >> receiverIn: composite [
 
 	(self codePresentationIn: composite forContext: self session context)
 		initialize: [ :code | code selectionInterval: (self session selectedCodeRangeForContext: self currentContext) ];
-		with: [ :code | self installReceiverActionsFor: code ]
+		with: [ :code | self installReceiverActionsFor: code ].
+		
+	composite custom:
+			((GTInspector new first "We use the first actual finder because need to send showFirst: to it"
+				fixedSizePanes: 1;
+				showFirst: [ :a | a custom: (GTDebuggerVariablesBrowser new noActions; noTitle) ];
+				yourself)
+					title: 'State')
 ]
 
 { #category : #accessing }
@@ -133,6 +149,12 @@ ACGlamourDebugger >> receiverSelectionInterval [
 ACGlamourDebugger >> selectedContext [
 
 	^ self interruptedContext
+]
+
+{ #category : #accessing }
+ACGlamourDebugger >> selectedStackContext [
+
+	^ ((self browser paneNamed: #stack) port: #selection)  value
 ]
 
 { #category : #accessing }
@@ -153,6 +175,7 @@ ACGlamourDebugger >> senderIn: composite [
 ACGlamourDebugger >> stackIn: composite [
 
 	(self stackWidgetIn: composite)
+		with: [ :code | self installStackActionsFor: code ];
 		selectionAct: [:each|  each selection explore] on: $i entitled: 'Explore'
 
 ]
