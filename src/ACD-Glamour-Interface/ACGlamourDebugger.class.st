@@ -1,6 +1,6 @@
 Class {
 	#name : #ACGlamourDebugger,
-	#superclass : #GTDebugger,
+	#superclass : #GTGenericStackDebugger,
 	#category : #'ACD-Glamour-Interface'
 }
 
