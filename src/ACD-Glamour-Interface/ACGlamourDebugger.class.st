@@ -117,14 +117,6 @@ ACGlamourDebugger >> installStackActionsFor: aPresentation [
 ]
 
 { #category : #'building presentations' }
-ACGlamourDebugger >> printStackEntry: aContext [
-
-	^ Text 
-		string: (super printStackEntry: aContext )
-		attributes: (self textAttributesForStackEntry: aContext) 
-]
-
-{ #category : #'building presentations' }
 ACGlamourDebugger >> receiverIn: composite [
 
 	(self codePresentationIn: composite forContext: self session context)
@@ -180,7 +172,7 @@ ACGlamourDebugger >> stackIn: composite [
 
 ]
 
-{ #category : #'private utilities' }
+{ #category : #'printing/formatting' }
 ACGlamourDebugger >> textAttributesForStackEntry: aContext [
 	| ctxt |
 	(self session receiverContext  == aContext )
