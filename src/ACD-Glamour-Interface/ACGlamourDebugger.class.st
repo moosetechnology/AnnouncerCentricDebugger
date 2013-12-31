@@ -17,6 +17,12 @@ ACGlamourDebugger class >> handlesContext: aContext [
 ]
 
 { #category : #'tools registry' }
+ACGlamourDebugger class >> register [
+
+	self registerToolsOn: Smalltalk tools.
+]
+
+{ #category : #'tools registry' }
 ACGlamourDebugger class >> registerToolsOn: registry [
 
 	"Add ourselves to registry. See [Smalltalk tools]" 
