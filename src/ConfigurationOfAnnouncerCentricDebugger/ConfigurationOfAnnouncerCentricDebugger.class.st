@@ -120,7 +120,7 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline02: spec [
 			spec repository: 'http://www.smalltalkhub.com/mc/AndreiChis/AnnouncerCentricDebugger/main'.
 			spec
 				package: 'ACD-Model';
-				package: 'ACD-Glamour-Interface' with: [ spec requires: #('ACD-Model' 'DebuggerExtensions' 'GT-Debugger') ].
+				package: 'ACD-Glamour-Interface' with: [ spec requires: #('ACD-Model' 'GT-Debugger') ].
 				
 			spec group: 'default' with: #(
 				'Core' 
@@ -136,10 +136,7 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline02: spec [
 						file: 'ConfigurationOfGToolkit';
 						version: #development;
 						loads: 'GT-Debugger';
-						repository: 'http://www.smalltalkhub.com/mc/Moose/GToolkit/main' ].
-			spec
-				package: 'DebuggerExtensions'
-				with: [ spec repository: 'http://www.smalltalkhub.com/mc/AndreiChis/Playground/main' ] ]
+						repository: 'http://www.smalltalkhub.com/mc/Moose/GToolkit/main' ] ]
 ]
 
 { #category : #baselines }
