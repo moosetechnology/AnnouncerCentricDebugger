@@ -140,10 +140,38 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline02: spec [
 ]
 
 { #category : #baselines }
+ConfigurationOfAnnouncerCentricDebugger >> baseline03: spec [
+	<version: '0.3-baseline'>
+	spec
+		for: #common
+		do: [ 
+			spec blessing: #baseline.
+			spec repository: 'http://www.smalltalkhub.com/mc/AndreiChis/AnnouncerCentricDebugger/main'.
+			spec
+				package: 'ACD-Model';
+				package: 'ACD-Glamour-Interface' with: [ spec requires: #('ACD-Model' 'GTDebugger') ].
+				
+			spec group: 'default' with: #(
+				'Core' 
+				'UI').
+			spec group: 'Core' with: #('ACD-Model').
+			spec group: 'UI' with: #('ACD-Glamour-Interface').
+			
+			spec
+				project: 'GTDebugger'
+				with: [ 
+					spec
+						className: 'ConfigurationOfGTDebugger';
+						file: 'ConfigurationOfGTDebugger';
+						version: #development;
+						repository: 'http://www.smalltalkhub.com/mc/Moose/GToolkit/main' ] ]
+]
+
+{ #category : #baselines }
 ConfigurationOfAnnouncerCentricDebugger >> development: spec [
 	<symbolicVersion: #'development'>
 
-	spec for: #'common' version: '0.2-baseline'
+	spec for: #'common' version: '0.3-baseline'
 ]
 
 { #category : #accessing }
