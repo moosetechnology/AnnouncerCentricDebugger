@@ -129,12 +129,12 @@ ACGlamourDebugger >> receiverIn: composite [
 		initialize: [ :code | code selectionInterval: (self session selectedCodeRangeForContext: self currentContext) ];
 		with: [ :code | self installReceiverActionsFor: code ].
 		
-	composite custom:
-			((GTInspector new first "We use the first actual finder because need to send showFirst: to it"
+	"composite custom:
+			((GTInspector new first 
 				fixedSizePanes: 1;
 				showFirst: [ :a | a custom: (GTDebuggerVariablesBrowser new noActions; noTitle) ];
 				yourself)
-					title: 'State')
+					title: 'State')"
 ]
 
 { #category : #accessing }
