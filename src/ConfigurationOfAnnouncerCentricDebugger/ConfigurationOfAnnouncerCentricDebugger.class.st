@@ -167,7 +167,7 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline03: spec [
 						repository: 'http://www.smalltalkhub.com/mc/Moose/GToolkit/main' ] ]
 ]
 
-{ #category : #baselines }
+{ #category : #'symbolic versions' }
 ConfigurationOfAnnouncerCentricDebugger >> development: spec [
 	<symbolicVersion: #'development'>
 
@@ -184,4 +184,29 @@ ConfigurationOfAnnouncerCentricDebugger >> project [
 		constructor := (Smalltalk at: #MetacelloVersionConstructor) on: self.
 		project := constructor project.
 		project]
+]
+
+{ #category : #'symbolic versions' }
+ConfigurationOfAnnouncerCentricDebugger >> stable: spec [
+	<symbolicVersion: #'stable'>
+
+	spec for: #'common' version: '0.3'.
+	
+]
+
+{ #category : #versions }
+ConfigurationOfAnnouncerCentricDebugger >> version03: spec [
+	<version: '0.3' imports: #('0.3-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'version 0.3'.
+		spec author: 'StephanEggermont'.
+		spec timestamp: '12/10/2014 10:34'.
+		spec 
+			project: 'GTDebugger' with: #stable.
+		spec 
+			package: 'ACD-Glamour-Interface' with: 'ACD-Glamour-Interface-AndreiChis.55';
+			package: 'ACD-Model' with: 'ACD-Model-AndreiChis.40';
+			package: 'ACD-Tests' with: 'ACD-Tests-AndreiChis.1'] 
 ]
