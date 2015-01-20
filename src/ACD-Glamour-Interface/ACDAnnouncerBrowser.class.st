@@ -14,7 +14,7 @@ ACDAnnouncerBrowser >> announcementIn: aComposite [
 	GTObjectVariablesBrowser new variablesIn: aComposite.
 	aComposite presentations last 
 		title: 'Announcement';
-		display: [ :aSession | aSession announcement gtInspectorRetrieveVariableValuePairs ];
+		display: [ :aSession | aSession announcement gtInspectorVariableValuePairs ];
 		selectionAct: [ :aPresentation |  aPresentation selection explore] on: $i entitled: 'Explore'
 ]
 
@@ -25,7 +25,7 @@ ACDAnnouncerBrowser >> announcerIn: aComposite [
 	GTObjectVariablesBrowser new variablesIn: aComposite.
 	aComposite presentations last 
 		title: 'Announcer';
-		display: [ :aSession | aSession announcer gtInspectorRetrieveVariableValuePairs ];
+		display: [ :aSession | aSession announcer gtInspectorVariableValuePairs ];
 		selectionAct: [ :aPresentation |  aPresentation selection explore] on: $i entitled: 'Explore' 
 
 
