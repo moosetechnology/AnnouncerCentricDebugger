@@ -107,7 +107,7 @@ ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 { #category : #'building actions' }
 ACGlamourDebugger >> installReceiverActionsFor: aPresentation [
 
-	self installActionsForRootPragmas: #(debuggingAction codeDebuggingAction) in: aPresentation
+	self installActionsForRootPragmas: #(stackDebuggingAction codeDebuggingAction) in: aPresentation
 ]
 
 { #category : #'building actions' }
