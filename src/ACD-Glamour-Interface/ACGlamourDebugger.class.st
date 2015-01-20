@@ -54,6 +54,11 @@ ACGlamourDebugger >> announcersBrowser [
 	^ ((self browser paneNamed: #announcer) presentations first panes first presentations first) 
 ]
 
+{ #category : #accessing }
+ACGlamourDebugger >> codePresentation [
+	^ self receiverCodePresentation
+]
+
 { #category : #'building presentations' }
 ACGlamourDebugger >> codePresentationIn: aComposite forContext: aContext [
 
@@ -107,19 +112,25 @@ ACGlamourDebugger >> debuggerTransmissionsIn: browser [
 { #category : #'building actions' }
 ACGlamourDebugger >> installReceiverActionsFor: aPresentation [
 
-	self installActionsForRootPragmas: #(stackDebuggingAction codeDebuggingAction) in: aPresentation
+	self installActionsForRootPragmas: self receiverActionsPragmas in: aPresentation
 ]
 
 { #category : #'building actions' }
 ACGlamourDebugger >> installSenderActionsFor: aPresentation [
 
-	self installActionsForRootPragmas: { #ACDSenderDebuggingAction } in: aPresentation
+	self installActionsForRootPragmas: self senderDebuggingActionsPragmas in: aPresentation
 ]
 
 { #category : #'building actions' }
-ACGlamourDebugger >> installStackActionsFor: aPresentation [
+ACGlamourDebugger >> receiverActionsPragmas [
 
-	self installActionsForRootPragmas: { #ACDStackDebuggingAction } in: aPresentation
+	^ #(debuggingAction receiverDebuggingAction), self codeActionsPragmas
+]
+
+{ #category : #accessing }
+ACGlamourDebugger >> receiverCodePresentation [
+
+	^ self receiverPane presentations first
 ]
 
 { #category : #'building presentations' }
@@ -135,6 +146,12 @@ ACGlamourDebugger >> receiverIn: composite [
 				showFirst: [ :a | a custom: (GTDebuggerVariablesBrowser new noActions; noTitle) ];
 				yourself)
 					title: 'State')"
+]
+
+{ #category : #accessing }
+ACGlamourDebugger >> receiverPane [
+
+	^ self browser paneNamed: #receiver
 ]
 
 { #category : #accessing }
@@ -161,6 +178,12 @@ ACGlamourDebugger >> selectedSubscription [
 	^  self announcersBrowser selectedSubscription 
 ]
 
+{ #category : #'building actions' }
+ACGlamourDebugger >> senderDebuggingActionsPragmas [
+
+	^ #(ACDSenderDebuggingAction)
+]
+
 { #category : #'building presentations' }
 ACGlamourDebugger >> senderIn: composite [
 
@@ -169,11 +192,16 @@ ACGlamourDebugger >> senderIn: composite [
 		with: [ :code | self installSenderActionsFor: code ]
 ]
 
+{ #category : #'building actions' }
+ACGlamourDebugger >> stackDebuggingActionsPragmas [
+
+	^ #( stackDebuggingAction )
+]
+
 { #category : #'building presentations' }
 ACGlamourDebugger >> stackIn: composite [
 
-	(self stackWidgetIn: composite)
-		with: [ :code | self installStackActionsFor: code ];
+	(super stackIn: composite)
 		selectionAct: [:each|  each selection explore] on: $i entitled: 'Explore'
 
 ]
