@@ -16,39 +16,41 @@ ACDStepToSubscriptionDebugAction class >> acdActionTypeForDebugger: aDebugger [
 		
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 ACDStepToSubscriptionDebugAction >> appliesToContext: aContext [
 
 	^ (self session hasSubscriptionExecuted: targetSubscription) not
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDStepToSubscriptionDebugAction >> defaultLabel [
 
 	^ 'Step to subscription'
 ]
 
-{ #category : #'as yet unclassified' }
-ACDStepToSubscriptionDebugAction >> deliveryStart [ 
-
-	^ self session createPredicateForBlock: [ :aContext | 
-			aContext receiver == targetSubscription and: [ 
-					aContext selector =  #deliver: and: [ 
-						aContext closure notNil ] ] ] 
-]
-
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 ACDStepToSubscriptionDebugAction >> executeAction [ 
 
-	self session stepOver: self session announcementLoopContext.
-	self session stepUntil: self deliveryStart.
-	(self deliveryStart matches: self interruptedContext) 
+	[ self interruptedContext receiver == targetSubscription  ] 
+		whileFalse: [ 
+			self session stepOver: self session announcementLoopContext.
+			self session stepUntil: self nextDeliveryStart. ].
+	(self nextDeliveryStart matches: self interruptedContext) 
 		ifTrue: [ 
 			self session stepUntil: (self session subscriptionDelivery).
 			self session updateReceiver ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #predicates }
+ACDStepToSubscriptionDebugAction >> nextDeliveryStart [ 
+
+	^ self session createPredicateForBlock: [ :aContext | 
+			aContext receiver isSubscription and: [  
+				aContext selector =  #deliver: and: [ 
+					aContext closure notNil ] ] ]
+]
+
+{ #category : #accessing }
 ACDStepToSubscriptionDebugAction >> targetSubscription: aSubscription [
 
 	targetSubscription := aSubscription
