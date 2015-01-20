@@ -155,7 +155,7 @@ ACDDebugSession >> updateFromReceiverContext: aContext [
 { #category : #updating }
 ACDDebugSession >> updateReceiver [
 	
-	^ self updateFromReceiverContext: (self stepToFirstInterestingBytecodeIn: self process)
+	^ self updateFromReceiverContext: self interruptedContext
 ]
 
 { #category : #updating }
