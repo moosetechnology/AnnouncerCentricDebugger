@@ -30,11 +30,19 @@ ACDStepToSubscriptionDebugAction >> defaultLabel [
 
 { #category : #actions }
 ACDStepToSubscriptionDebugAction >> executeAction [ 
+	| receiverSender |
 
+	receiverSender := self session receiverContext sender.			
 	[ self interruptedContext receiver == targetSubscription  ] 
 		whileFalse: [ 
-			self session stepOver: self session announcementLoopContext.
-			self session stepUntil: self nextDeliveryStart. ].
+			self session stepOver: receiverSender.
+			(self interruptedContext == receiverSender) 
+				ifFalse: [ self session contextChanged. ^ self ].
+			
+			self session stepOver: (self session stackFilterFor: receiverSender) locateAnnouncementDelivery.
+			self session stepUntil: self nextDeliveryStart.
+			receiverSender := self interruptedContext ].
+		
 	(self nextDeliveryStart matches: self interruptedContext) 
 		ifTrue: [ 
 			self session stepUntil: (self session subscriptionDelivery).
