@@ -178,10 +178,16 @@ ACGlamourDebugger >> selectedSubscription [
 	^  self announcersBrowser selectedSubscription 
 ]
 
+{ #category : #accessing }
+ACGlamourDebugger >> senderCodePresentation [
+
+	^ self senderPane presentations first
+]
+
 { #category : #'building actions' }
 ACGlamourDebugger >> senderDebuggingActionsPragmas [
 
-	^ #(ACDSenderDebuggingAction)
+	^ { #ACDSenderDebuggingAction }
 ]
 
 { #category : #'building presentations' }
@@ -190,6 +196,12 @@ ACGlamourDebugger >> senderIn: composite [
 	(self codePresentationIn: composite forContext: self session senderContext)
 		initialize: [ :code | code selectionInterval: (self session selectedCodeRangeForContext: self session senderContext) ];
 		with: [ :code | self installSenderActionsFor: code ]
+]
+
+{ #category : #accessing }
+ACGlamourDebugger >> senderPane [
+
+	^ self browser paneNamed: #sender
 ]
 
 { #category : #'building actions' }
