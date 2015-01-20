@@ -127,6 +127,15 @@ ACDDebugSession >> stepUntil: aPredicate [
 	^ self stepUntil: aPredicate from: self interruptedContext.
 ]
 
+{ #category : #'debugging actions' }
+ACDDebugSession >> stepUntil: aPredicate from: aContext [ 
+	
+	self process stepUntil: (self createStepPredicateForPredicate: aPredicate) from: aContext.
+	self  
+		updateWithContext: (self stepToFirstInterestingBytecodeIn: self process) 
+		fromProcess: self process.
+]
+
 { #category : #predicates }
 ACDDebugSession >> subscriptionDelivery [ 
 	| aSubscription |
