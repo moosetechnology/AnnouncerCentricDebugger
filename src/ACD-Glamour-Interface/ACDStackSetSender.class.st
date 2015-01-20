@@ -9,7 +9,7 @@ ACDStackSetSender class >> gtACDSenderActionFor: aDebugger [
 	<gtContextACDStackDebuggingAction>
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 ACDStackSetSender >> appliesToDebugger: aDebugger [
 	"Only a context bellow the receiver context can be selected as the sender"
 	
@@ -17,25 +17,25 @@ ACDStackSetSender >> appliesToDebugger: aDebugger [
 		(aSenderContext == aDebugger session receiverContext) ]) isNil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDStackSetSender >> defaultLabel [
 
 	^ 'Set as sender'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDStackSetSender >> defaultOrder [
 
 	^ 205
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 ACDStackSetSender >> executeAction [
 
 	self session updateSenderFrom: self debugger selectedStackContext
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDStackSetSender >> id [
 
 	^ #gtSetAsSenderDebuggerAction

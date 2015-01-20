@@ -4,7 +4,7 @@ Class {
 	#category : #'ACD-Glamour-Interface'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 ACDStackSetReceiver >> appliesToDebugger: aDebugger [
 	"Only a context above the sender context can be selected as the receiver"
 	
@@ -12,25 +12,25 @@ ACDStackSetReceiver >> appliesToDebugger: aDebugger [
 		(aContext == aDebugger session senderContext) ]) isNil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDStackSetReceiver >> defaultLabel [
 
 	^ 'Set as receiver'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDStackSetReceiver >> defaultOrder [
 
 	^ 200
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 ACDStackSetReceiver >> executeAction [
 
 	self session updateReceiverFrom: self debugger selectedStackContext
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDStackSetReceiver >> id [
 
 	^ #gtSetAsReceiverDebuggerAction
