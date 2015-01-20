@@ -9,19 +9,19 @@ ACDSenderCalleeAction class >> gtACDSenderActionFor: aDebugger [
 	<gtACDSenderDebuggingAction>
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDSenderCalleeAction >> defaultIcon [
 
 	^ GLMUIThemeExtraIcons glamorousRight
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDSenderCalleeAction >> defaultLabel [
 
 	^ 'Next Context'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 ACDSenderCalleeAction >> executeAction [
 
 	self session updateSenderFrom: (self session process calleeOf:  self session senderContext) 

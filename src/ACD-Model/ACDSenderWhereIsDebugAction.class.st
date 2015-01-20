@@ -12,13 +12,13 @@ ACDSenderWhereIsDebugAction class >> gtActionFor: aDebugger [
 			icon: GLMUIThemeExtraIcons glamorousSearch
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 ACDSenderWhereIsDebugAction >> executeAction [
 
 	self debugger updateSenderCodeSelection
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ACDSenderWhereIsDebugAction >> id [
 
 	^ #acdSenderWhereIs
