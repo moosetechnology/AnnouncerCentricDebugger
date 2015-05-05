@@ -146,7 +146,7 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline03: spec [
 		for: #common
 		do: [ 
 			spec blessing: #baseline.
-			spec repository: 'http://www.smalltalkhub.com/mc/AndreiChis/AnnouncerCentricDebugger/main'.
+			spec repository: 'http://www.smalltalkhub.com/mc/Moose/AnnouncerCentricDebugger/main'.
 			spec
 				package: 'ACD-Model' with: [ spec requires: #('GTDebugger') ];
 				package: 'ACD-Glamour-Interface' with: [ spec requires: #('ACD-Model') ].
