@@ -171,7 +171,8 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline03: spec [
 ConfigurationOfAnnouncerCentricDebugger >> development: spec [
 	<symbolicVersion: #'development'>
 
-	spec for: #'common' version: '0.3-baseline'
+	spec for: #'common' version: '0.3-baseline'.
+	spec for: #'pharo4.x' version: '0.3-baseline'
 ]
 
 { #category : #accessing }
@@ -190,7 +191,8 @@ ConfigurationOfAnnouncerCentricDebugger >> project [
 ConfigurationOfAnnouncerCentricDebugger >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'common' version: '0.3'.
+	spec for: #'common' version: '0.4'.
+	spec for: #'pharo4.x' version: '0.4'.
 	
 ]
 
@@ -208,5 +210,22 @@ ConfigurationOfAnnouncerCentricDebugger >> version03: spec [
 		spec 
 			package: 'ACD-Glamour-Interface' with: 'ACD-Glamour-Interface-AndreiChis.55';
 			package: 'ACD-Model' with: 'ACD-Model-AndreiChis.40';
+			package: 'ACD-Tests' with: 'ACD-Tests-AndreiChis.1'] 
+]
+
+{ #category : #versions }
+ConfigurationOfAnnouncerCentricDebugger >> version04: spec [
+	<version: '0.4' imports: #('0.3-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'version 0.4'.
+		spec author: 'AndreiChis'.
+		spec timestamp: '05/05/2015'.
+		spec 
+			project: 'GTDebugger' with: #stable.
+		spec 
+			package: 'ACD-Glamour-Interface' with: 'ACD-Glamour-Interface-AndreiChis.60';
+			package: 'ACD-Model' with: 'ACD-Model-AndreiChis.46';
 			package: 'ACD-Tests' with: 'ACD-Tests-AndreiChis.1'] 
 ]
