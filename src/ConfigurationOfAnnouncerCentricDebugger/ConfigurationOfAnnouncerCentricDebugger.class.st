@@ -167,12 +167,46 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline03: spec [
 						repository: 'http://www.smalltalkhub.com/mc/Moose/GToolkit/main' ] ]
 ]
 
+{ #category : #baselines }
+ConfigurationOfAnnouncerCentricDebugger >> baseline04: spec [
+	<version: '0.4-baseline'>
+	spec
+		for: #common
+		do: [ 
+			spec blessing: #baseline.
+			spec repository: 'http://www.smalltalkhub.com/mc/Moose/AnnouncerCentricDebugger/main'.
+			spec
+				package: 'ACD-Model' with: [ spec requires: #('GTDebugger' 'NewDebugger') ];
+				package: 'ACD-Glamour-Interface' with: [ spec requires: #('ACD-Model') ].
+				
+			spec group: 'default' with: #(
+				'Core' 
+				'UI').
+			spec group: 'Core' with: #('ACD-Model').
+			spec group: 'UI' with: #('ACD-Glamour-Interface').
+			
+			spec
+				project: 'GTDebugger' with: [ 
+					spec
+						className: 'ConfigurationOfGTDebugger';
+						file: 'ConfigurationOfGTDebugger';
+						version: #development;
+						repository: 'http://www.smalltalkhub.com/mc/Moose/GToolkit/main' ];
+				project: 'NewDebugger' with: [
+					spec
+						versionString: #'development';
+						className: 'ConfigurationOfNewDebugger';
+						loads: #('DebuggerExtensions');
+						repository: 'http://www.smalltalkhub.com/mc/Pharo/Debugger/main' ] ]
+]
+
 { #category : #'symbolic versions' }
 ConfigurationOfAnnouncerCentricDebugger >> development: spec [
 	<symbolicVersion: #'development'>
 
 	spec for: #'common' version: '0.3-baseline'.
 	spec for: #'pharo4.x' version: '0.3-baseline'
+	spec for: #'pharo5.x' version: '0.4-baseline'
 ]
 
 { #category : #accessing }
