@@ -178,7 +178,10 @@ ConfigurationOfAnnouncerCentricDebugger >> baseline04: spec [
 			spec
 				package: 'ACD-Model' with: [ spec requires: #('GTDebugger') ];
 				package: 'ACD-Glamour-Interface' with: [ spec requires: #('ACD-Model') ];
-				package: 'GT-DebuggerExtensions' with: [ spec requires: #('GTDebugger') ].
+				package: 'GT-DebuggerExtensions' with: [ 
+					spec
+						repository: 'http://www.smalltalkhub.com/mc/Moose/GToolkit/main'; 
+						requires: #('GTDebugger') ].
 				
 			spec group: 'default' with: #(
 				'Core' 
