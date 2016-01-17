@@ -7,7 +7,7 @@ Class {
 { #category : #accessing }
 ACGlamourDebugger class >> defaultTitle [
 
-	^ 'Announcement Centric Debugger'
+	^ 'Announcement'
 ]
 
 { #category : #testing }
