@@ -203,8 +203,11 @@ ConfigurationOfAnnouncerCentricDebugger >> development: spec [
 	<symbolicVersion: #'development'>
 
 	spec for: #'common' version: '0.3-baseline'.
+
 	spec for: #'pharo4.x' version: '0.3-baseline'.
-	spec for: #'pharo5.x' version: '0.4-baseline'
+
+	spec for: #'pharo5.x' version: #'stable'.
+
 ]
 
 { #category : #accessing }
@@ -224,8 +227,11 @@ ConfigurationOfAnnouncerCentricDebugger >> stable: spec [
 	<symbolicVersion: #'stable'>
 
 	spec for: #'common' version: '0.4'.
+
 	spec for: #'pharo4.x' version: '0.4'.
-	
+
+	spec for: #'pharo5.x' version: '1.0'.
+
 ]
 
 { #category : #versions }
@@ -260,4 +266,21 @@ ConfigurationOfAnnouncerCentricDebugger >> version04: spec [
 			package: 'ACD-Glamour-Interface' with: 'ACD-Glamour-Interface-AndreiChis.60';
 			package: 'ACD-Model' with: 'ACD-Model-AndreiChis.46';
 			package: 'ACD-Tests' with: 'ACD-Tests-AndreiChis.1'] 
+]
+
+{ #category : #versions }
+ConfigurationOfAnnouncerCentricDebugger >> version10: spec [
+	<version: '1.0' imports: #('0.4-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'Moose 6.0 release'.
+		spec author: 'TudorGirba'.
+		spec timestamp: '8/14/2016 20:44'.
+		spec project: 'GTDebugger' with: #'stable'.
+		spec 
+			package: 'ACD-Model' with: 'ACD-Model-AndreiChis.46';
+			package: 'ACD-Glamour-Interface' with: 'ACD-Glamour-Interface-TudorGirba.61';
+			package: 'GT-DebuggerExtensions' with: 'GT-DebuggerExtensions-AndreiChis.2'. ].
+
 ]
