@@ -16,26 +16,26 @@ ACDContextLocator class >> forContext: aContext [
 { #category : #'accessing actions' }
 ACDContextLocator >> extractActiveSubscriptions [
 
-	^ context ifNotNilDo: [:aContext| aContext tempNamed: 'subs']
+	^ context ifNotNil: [:aContext| aContext tempNamed: 'subs']
 ]
 
 { #category : #'accessing actions' }
 ACDContextLocator >> extractAnnouncement [
 
-	^ context ifNotNilDo: [:aContext| aContext tempNamed: 'anAnnouncement']
+	^ context ifNotNil: [:aContext| aContext tempNamed: 'anAnnouncement']
 ]
 
 { #category : #'accessing actions' }
 ACDContextLocator >> extractExecutingSubscription [
 	
-	^ context ifNotNilDo: [:aContext|
+	^ context ifNotNil: [:aContext|
 		(aContext tempNamed: 'subs') at: (aContext tempNamed: 'index')  ]
 ]
 
 { #category : #'accessing actions' }
 ACDContextLocator >> extractExecutingSubscriptionIndex [
 
-	^ context ifNotNilDo: [:aContext| aContext tempNamed: 'index' ]
+	^ context ifNotNil: [:aContext| aContext tempNamed: 'index' ]
 ]
 
 { #category : #private }
